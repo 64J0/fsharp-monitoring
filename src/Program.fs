@@ -1,8 +1,8 @@
 ﻿open Saturn
-open Giraffe
 
-let app = application {
-    use_router (text "Hello World from Saturn")
-}
+open API
 
-run app
+[<EntryPoint>]
+let main _ =
+  run Config.serverConfig
+  0 // return an integer exit code
