@@ -1,2 +1,4 @@
-obj/*
-bin/*
+obj/
+bin/
+paket-files/
+.fake
