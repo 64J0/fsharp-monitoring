@@ -11,12 +11,12 @@ let indexCounter =
         CounterConfiguration()
     )
 
-let indexFn (ctx) =
+let indexController (ctx) =
     indexCounter.Inc() |> ignore
 
     "Index handler version 1" 
     |> Controller.text ctx
 
 let apiController = controller {
-    index (indexFn)
+    index (indexController)
 }
