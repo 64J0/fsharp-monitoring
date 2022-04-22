@@ -22,12 +22,14 @@ let trackingRandomComputation () =
         createHistogram 
             ("create_tracking_random_computation") 
             ("Tracking some random computation being done")
-    use _ = histogram.NewTimer()
-    let rand = System.Random()
-    let rand1 = rand.Next()
-    let rand2 = rand.Next()
-    let result = rand1 - rand2
-    printfn "Result: %A" result
+    using (histogram.NewTimer()) (fun _ ->
+        let rand = System.Random()
+        let rand1 = rand.Next()
+        let rand2 = rand.Next()
+        let result = rand1 - rand2
+        printfn "Result: %A" result
+    )
+    
 
 let createController (ctx: HttpContext) =
     task {
