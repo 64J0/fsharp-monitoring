@@ -3,10 +3,12 @@ module API.Controller
 open Saturn
 open Prometheus
 
+// Counter for the index endpoint
 let indexCounter =
     Metrics.CreateCounter(
         "index_endpoint_total", 
-        "The total number of times the index endpoint was called", CounterConfiguration()
+        "The total number of times the index endpoint was called", 
+        CounterConfiguration()
     )
 
 let indexFn (ctx) =
