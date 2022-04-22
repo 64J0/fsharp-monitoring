@@ -1,7 +1,5 @@
 source https://api.nuget.org/v3/index.json
-framework: auto-detect
+framework: net6.0
 storage: none
 
 nuget Saturn
-nuget prometheus-net
-nuget prometheus-net.AspNetCore

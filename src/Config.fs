@@ -9,6 +9,7 @@ open Microsoft.Extensions.DependencyInjection
 open Giraffe
 open Saturn
 open Microsoft.Extensions.Logging
+open Prometheus
 
 open API
 

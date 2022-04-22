@@ -10,5 +10,9 @@
     <Compile Include="src/Config.fs" />
     <Compile Include="src/Program.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="prometheus-net" Version="6.0.0" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
+  </ItemGroup>
   <Import Project=".paket\Paket.Restore.targets" />
 </Project>
