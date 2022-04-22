@@ -37,3 +37,15 @@ $ dotnet build
 # start the server
 $ dotnet run
 ```
+
+## How to test it locally
+
+```bash
+# you need to send this header
+curl -H "Accept: application/json" localhost:8085/api/test
+
+# this would be the real application endpoint
+curl -H "Accept: application/json" localhost:8085/api
+```
+
+You can later see the metrics by visiting `localhost:8085/metrics` in your browser.
