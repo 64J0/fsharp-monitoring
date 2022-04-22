@@ -10,6 +10,7 @@ type CreatePayload =
       message: string }
 
 // Counter for the index endpoint
+// Counters only increase in value and reset to zero when the process restarts.
 let indexCounter =
     Metrics.CreateCounter(
         "index_counter_endpoint_total", 
@@ -18,6 +19,7 @@ let indexCounter =
     )
 
 // Gauge for the index endpoint
+// Gauges can have any numeric value and change arbitrarily.
 let indexGauge =
     Metrics.CreateGauge(
         "index_gauge_endpoint",
@@ -26,6 +28,7 @@ let indexGauge =
 
 // Summary for the index endpoint
 // https://github.com/prometheus-net/prometheus-net#summary
+// Summaries track the trends in events over time (10 minutes by default).
 let createSummary =
     let objectives =
         seq {
@@ -36,23 +39,53 @@ let createSummary =
         } |> Immutable.ImmutableList.ToImmutableList
 
     Metrics.CreateSummary(
-        "index_summary_request_size_bytes",
+        "create_summary_request_size_bytes",
         "Summary of index request sizes (in bytes) over last 10 minutes.",
         new SummaryConfiguration(
             Objectives = objectives
         )
     )
 
+// https://github.com/prometheus-net/prometheus-net#histogram
+// Histograms track the size and number of events in buckets. This allows for 
+// aggregatable calculation of quantiles.
+let createHistogram (name: string) (description: string) =
+    Metrics.CreateHistogram(
+        name,
+        description
+    )
+
 let indexController (ctx: HttpContext) =
-    indexCounter.Inc() |> ignore
-    indexGauge.Inc(10) |> ignore
+    do indexCounter.Inc()
+    do indexGauge.Inc(10)
+
     "Index handler version 1" 
     |> Controller.text ctx
+
+let trackingRandomComputation () =
+    let histogram = 
+        createHistogram 
+            ("create_tracking_random_computation") 
+            ("Tracking some random computation being done")
+    use _ = histogram.NewTimer()
+    let rand = System.Random()
+    let rand1 = rand.Next()
+    let rand2 = rand.Next()
+    let result = rand1 - rand2
+    printfn "Result: %A" result
 
 let createController (ctx: HttpContext) =
     task {
         let! cnf = Controller.getJson<CreatePayload> ctx
-        createSummary.Observe cnf.id
+
+        do createSummary.Observe cnf.id
+
+        let histogram =
+            createHistogram 
+                ("create_request_id") 
+                ("Histogram of requests made by each id")
+        do histogram.Observe cnf.id
+        do trackingRandomComputation ()
 
         return! 
             (sprintf "Request OK\nId: %d\nMessage: %s" cnf.id cnf.message)
