@@ -42,10 +42,20 @@ $ dotnet run
 
 ```bash
 # you need to send this header
-curl -H "Accept: application/json" localhost:8085/api/test
+curl -X GET \
+    -H "Accept: application/json" \
+    localhost:8085/api/test
 
 # this would be the real application endpoint
-curl -H "Accept: application/json" localhost:8085/api
+curl -X GET \
+    -H "Accept: application/json" \
+    localhost:8085/api
+
+# trying the POST endpoint
+curl -X POST \
+    -H "Accept: application/json" \
+    -d '{"id":"1", "message":"F#, Prometheus and Grafana"}' \
+    localhost:8085/api
 ```
 
 You can later see the metrics by visiting `localhost:8085/metrics` in your browser.
