@@ -59,3 +59,14 @@ curl -X POST \
 ```
 
 You can later see the metrics by visiting `localhost:8085/metrics` in your browser.
+
+## Run with Docker
+
+```bash
+# docker image standalone
+docker build -t prometheus-api:v1 .
+docker run -d -e HOST="0.0.0.0" -p 8085:8085 prometheus-api:v1
+
+# docker-compose
+docker-compose up -d
+```
