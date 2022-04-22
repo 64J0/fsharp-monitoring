@@ -9,6 +9,21 @@ open Prometheus
 
 open API
 
+let setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
+    match readEnvVar with
+    | null -> defaultValue
+    | _ -> readEnvVar
+
+let HOST =
+    System.Environment.GetEnvironmentVariable("HOST")
+    |> setEnvVarDefaultValue ("localhost")
+
+let PORT =
+    System.Environment.GetEnvironmentVariable("PORT")
+    |> setEnvVarDefaultValue ("8085")
+
+    
+
 let loggingConfig (builder: ILoggingBuilder) =
     builder.SetMinimumLevel(LogLevel.Information) 
     |> ignore
@@ -24,7 +39,7 @@ let serverConfig = application {
     use_antiforgery
     
     use_router Router.appRouter
-    url "http://localhost:8085"
+    url (sprintf "http://%s:%s" HOST PORT)
     use_gzip
 
     app_config configureApp
