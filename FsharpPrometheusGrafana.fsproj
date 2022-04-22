@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src/Prometheus.fs" />
     <Compile Include="src/Controller.fs" />
     <Compile Include="src/Router.fs" />
     <Compile Include="src/Config.fs" />
