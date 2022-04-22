@@ -3,3 +3,5 @@ framework: auto-detect
 storage: none
 
 nuget Saturn
+nuget prometheus-net
+nuget prometheus-net.AspNetCore
