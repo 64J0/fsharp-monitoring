@@ -70,3 +70,5 @@ docker run -d -e HOST="0.0.0.0" -p 8085:8085 prometheus-api:v1
 # docker-compose
 docker-compose up -d
 ```
+
+When this project is running you can visit `localhost:9090` and start grabbing the metrics for our project.
