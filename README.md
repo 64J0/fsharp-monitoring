@@ -60,7 +60,7 @@ curl -X POST \
 
 You can later see the metrics by visiting `localhost:8085/metrics` in your browser.
 
-## Run with Docker
+## Run with Docker-compose
 
 ```bash
 # docker image standalone
