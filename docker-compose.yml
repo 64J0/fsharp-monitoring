@@ -1,5 +1,12 @@
 version: "3.9"
 
+networks:
+  monitoring-network: {}
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
 services:
   api-server:
     build: .
@@ -11,5 +18,15 @@ services:
     networks:
       - monitoring-network
 
-networks:
-  monitoring-network: {}
+  prometheus:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - monitoring-network
+    volumes:
+      - ./Prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
