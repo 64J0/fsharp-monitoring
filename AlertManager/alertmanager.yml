@@ -1,0 +1,13 @@
+# from: https://github.com/vegasbrianc/prometheus/blob/master/alertmanager/config.yml
+route:
+  receiver: 'slack'
+
+receivers:
+  - name: 'slack'
+#       slack_configs:
+#           - send_resolved: true
+#             username: '<username>'
+#             channel: '#<channel-name>'
+#             api_url: '<incomming-webhook-url>'
+
+# https://prometheus.io/docs/alerting/latest/https/
