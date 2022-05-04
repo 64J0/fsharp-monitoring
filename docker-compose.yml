@@ -22,8 +22,9 @@ services:
   prometheus:
     image: prom/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.config.file=/etc/prometheus/web.yml"
     networks:
       - monitoring-network
     depends_on:
@@ -31,24 +32,24 @@ services:
     volumes:
       - ./Prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
-    links:
-      - alertmanager:alertmanager
+    # links:
+    #   - alertmanager:alertmanager
     ports:
       - "9090:9090"
     # restart: always
 
-  alertmanager:
-    image: prom/alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
-    ports:
-      - 9093:9093
-    volumes:
-      - ./AlertManager/:/etc/alertmanager/
-    networks:
-      - monitoring-network
-    # restart: always
+  # alertmanager:
+  #   image: prom/alertmanager
+  #   command:
+  #     - "--config.file=/etc/alertmanager/config.yml"
+  #     - "--storage.path=/alertmanager"
+  #   ports:
+  #     - 9093:9093
+  #   volumes:
+  #     - ./AlertManager/:/etc/alertmanager/
+  #   networks:
+  #     - monitoring-network
+  #   # restart: always
 
   # cAdvisor (Container Advisor) provides container users an understanding of the 
   # resource usage and performance characteristics of their running containers. It 
@@ -83,6 +84,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./Grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./Grafana/config.monitoring
     ports:
       - "3000:3000"
     # restart: always
