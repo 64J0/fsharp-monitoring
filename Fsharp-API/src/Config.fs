@@ -9,30 +9,28 @@ open Prometheus
 
 open API
 
-let setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
+let private setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
     match readEnvVar with
     | null -> defaultValue
     | _ -> readEnvVar
 
-let HOST =
+let private HOST =
     System.Environment.GetEnvironmentVariable("HOST")
     |> setEnvVarDefaultValue ("localhost")
 
-let PORT =
+let private PORT =
     System.Environment.GetEnvironmentVariable("PORT")
     |> setEnvVarDefaultValue ("8085")
 
     
 
-let loggingConfig (builder: ILoggingBuilder) =
+let private loggingConfig (builder: ILoggingBuilder) =
     builder.SetMinimumLevel(LogLevel.Information) 
     |> ignore
 
 // https://gist.github.com/pecigonzalo/463ebb7d6f8ed7b8b102f000edb8cf6b#metrics
-let configureApp (app: IApplicationBuilder) =
-    app.UseHttpMetrics() |> ignore
-    app.UseMetricServer() |> ignore
-    app
+let private configureApp (app: IApplicationBuilder) =
+    app.UseHttpMetrics().UseMetricServer()
 
 let serverConfig = application {
     logging loggingConfig

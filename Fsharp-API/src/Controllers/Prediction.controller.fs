@@ -11,7 +11,7 @@ type CreatePayload =
     { id: int
       crimesPerCapta: float }
 
-let trackPredictionComputation (crimesPerCapta: float) =
+let private trackPredictionComputation (crimesPerCapta: float) =
     let histogram = 
         createHistogram 
             ("create_tracking_random_computation") 
@@ -23,8 +23,9 @@ let trackPredictionComputation (crimesPerCapta: float) =
     )
     
 
-let createController (ctx: HttpContext) =
+let private createController (ctx: HttpContext) =
     task {
+        // TODO deal with problems when parsing the payload
         let! cnf = Controller.getJson<CreatePayload> ctx
 
         do createSummary.Observe cnf.id
@@ -38,7 +39,10 @@ let createController (ctx: HttpContext) =
         let prediction = trackPredictionComputation (cnf.crimesPerCapta)
 
         return! 
-            (sprintf "Request OK\nId: %d\nCrimesPerCapta: %f\nPrice Prediction: %f" (cnf.id) (cnf.crimesPerCapta) (prediction))
+            (sprintf "Request OK\nId: %d\nCrimesPerCapta: %f\nPrice Prediction: %f" 
+                (cnf.id) 
+                (cnf.crimesPerCapta) 
+                (prediction))
             |> Controller.text ctx
     }
     

@@ -1,11 +1,10 @@
 module API.Controller.Test
 
-open Prometheus
 open Giraffe.Core
 
 open API.Prometheus
 
 let index () =
-    do indexCounter.Inc()
+    do testIndexCounter.Inc()
 
-    text "Test endpoint work."
+    text "Test endpoint is working."

@@ -5,10 +5,10 @@ open Prometheus
 
 // Counter for the index endpoint
 // Counters only increase in value and reset to zero when the process restarts.
-let indexCounter =
+let testIndexCounter =
     Metrics.CreateCounter(
-        "index_counter_endpoint_total", 
-        "The total number of times the index endpoint was called.", 
+        "test_endpoint_counter", 
+        "The total number of times the test endpoint was called.", 
         CounterConfiguration()
     )
 
