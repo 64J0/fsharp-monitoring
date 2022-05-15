@@ -12,7 +12,6 @@ type CreatePayload =
 
 let indexController (ctx: HttpContext) =
     do indexCounter.Inc()
-    do indexGauge.Inc(10)
 
     "Index handler version 1" 
     |> Controller.text ctx
@@ -22,6 +21,7 @@ let trackingRandomComputation () =
         createHistogram 
             ("create_tracking_random_computation") 
             ("Tracking some random computation being done")
+            
     using (histogram.NewTimer()) (fun _ ->
         let rand = System.Random()
         let rand1 = rand.Next()

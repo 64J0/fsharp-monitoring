@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src/DataScience.fs" />
     <Compile Include="src/Prometheus.fs" />
     <Compile Include="src/Controller.fs" />
     <Compile Include="src/Router.fs" />
@@ -12,8 +13,11 @@
     <Compile Include="src/Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Deedle" Version="2.5.0" />
+    <PackageReference Include="FSharp.Data" Version="4.2.8" />
+    <PackageReference Include="FSharp.Stats" Version="0.4.5" />
     <PackageReference Include="prometheus-net" Version="6.0.0" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
+    <PackageReference Include="Saturn" Version="0.16.1" />
   </ItemGroup>
-  <Import Project=".paket\Paket.Restore.targets" />
 </Project>
