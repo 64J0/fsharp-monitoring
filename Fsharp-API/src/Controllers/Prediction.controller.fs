@@ -11,18 +11,6 @@ type CreatePayload =
     { id: int
       crimesPerCapta: float }
 
-let private trackPredictionComputation (crimesPerCapta: float) =
-    let histogram = 
-        createHistogram 
-            ("create_tracking_random_computation") 
-            ("Tracking some random computation being done")
-            
-    using (histogram.NewTimer()) (fun _ ->
-        crimesPerCapta 
-        |> getPrediction
-    )
-    
-
 let private createController (ctx: HttpContext) =
     task {
         // TODO deal with problems when parsing the payload
@@ -33,10 +21,19 @@ let private createController (ctx: HttpContext) =
         let histogram =
             createHistogram 
                 ("create_request_id") 
-                ("Histogram of requests made by each id")
+                ("[POST] Histogram of the requests made.")
         do histogram.Observe cnf.id
         
-        let prediction = trackPredictionComputation (cnf.crimesPerCapta)
+        let predictionHistogram = 
+            createHistogram 
+                ("prediction_computation_histogram") 
+                ("[POST] The histogram of the prediction computation.")
+
+        let prediction =
+            trackComputationHistogram 
+                (predictionHistogram) 
+                (getPrediction) 
+                (cnf.crimesPerCapta)
 
         return! 
             (sprintf "Request OK\nId: %d\nCrimesPerCapta: %f\nPrice Prediction: %f" 

@@ -48,3 +48,9 @@ let createHistogram (name: string) (description: string) =
         name,
         description
     )
+
+let trackComputationHistogram 
+    (histogram: Histogram) 
+    (computation: float -> float) 
+    (data: float) =
+    using (histogram.NewTimer()) (fun _ -> computation data)
