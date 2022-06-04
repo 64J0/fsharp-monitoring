@@ -22,13 +22,12 @@ let private PORT =
     System.Environment.GetEnvironmentVariable("PORT")
     |> setEnvVarDefaultValue ("8085")
 
-    
-
 let private loggingConfig (builder: ILoggingBuilder) =
     builder.SetMinimumLevel(LogLevel.Information) 
     |> ignore
 
 // https://gist.github.com/pecigonzalo/463ebb7d6f8ed7b8b102f000edb8cf6b#metrics
+// TODO: start the metrics server in a different PORT
 let private configureApp (app: IApplicationBuilder) =
     app.UseHttpMetrics().UseMetricServer()
 

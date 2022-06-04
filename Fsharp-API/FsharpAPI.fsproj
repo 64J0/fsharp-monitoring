@@ -11,7 +11,7 @@
     <Compile Include="src/Controllers/Prediction.controller.fs" />
     <Compile Include="src/Router.fs" />
     <Compile Include="src/Config.fs" />
-    <Compile Include="src/Program.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Deedle" Version="2.5.0" />

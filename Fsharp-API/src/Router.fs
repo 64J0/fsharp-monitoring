@@ -19,13 +19,13 @@ let private apiPipeline = pipeline {
 }
 
 let private apiRouter = router {
-    not_found_handler (setStatusCode 404 >=> text "Api 404")
     pipe_through apiPipeline
-
+    
     forward ("/prediction") (Controller.Prediction.apiController)
 }
 
 let appRouter = router {
+    not_found_handler (setStatusCode 404 >=> text "Endpoint not found.")
     pipe_through customMiddleware
 
     get ("/test") (Controller.Test.index ())

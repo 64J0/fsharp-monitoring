@@ -3,27 +3,19 @@ module API.Prometheus
 open System.Collections
 open Prometheus
 
-// Counter for the index endpoint
-// Counters only increase in value and reset to zero when the process restarts.
-let testIndexCounter =
-    Metrics.CreateCounter(
-        "test_endpoint_counter", 
-        "The total number of times the test endpoint was called.", 
-        CounterConfiguration()
-    )
+/// This function is used to create a counter so we can keep track of how many
+/// times some operation is done.
+let createCounter (name: string) (description: string) =
+    Metrics.CreateCounter(name, description, CounterConfiguration())
 
-// Gauge for the index endpoint
-// Gauges can have any numeric value and change arbitrarily.
-let indexGauge =
-    Metrics.CreateGauge(
-        "index_gauge_endpoint",
-        "Some arbitrary number related to the index endpoint."
-    )
+/// This function is used to create a new gauge metric.
+let createGauge (name: string) (description: string) =
+    Metrics.CreateGauge(name, description, GaugeConfiguration())
 
 // Summary for the index endpoint
 // https://github.com/prometheus-net/prometheus-net#summary
 // Summaries track the trends in events over time (10 minutes by default).
-let createSummary =
+let createSummary (name: string) (description: string) (customLabels: List<string * string>) =
     let objectives =
         seq {
             new QuantileEpsilonPair(0.5, 0.05)
@@ -32,9 +24,19 @@ let createSummary =
             new QuantileEpsilonPair(0.99, 0.005)
         } |> Immutable.ImmutableList.ToImmutableList
 
+    let labelNames =
+        customLabels
+        |> List.map fst
+        |> List.toArray
+
+    let labelValues =
+        customLabels
+        |> List.map snd
+        |> List.toArray
+
     Metrics.CreateSummary(
-        "create_summary_request_size_bytes",
-        "Summary of index request sizes (in bytes) over last 10 minutes.",
+        name,
+        description,
         new SummaryConfiguration(
             Objectives = objectives
         )
@@ -46,7 +48,8 @@ let createSummary =
 let createHistogram (name: string) (description: string) =
     Metrics.CreateHistogram(
         name,
-        description
+        description,
+        HistogramConfiguration()
     )
 
 let trackComputationHistogram 

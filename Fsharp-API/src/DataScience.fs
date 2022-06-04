@@ -40,7 +40,7 @@ let private predictPriceByCrimesPerCapta (data: Frame<'a, string>) =
         Linear.Univariable.coefficient (vector x1) (vector x2))
     |> Linear.Univariable.fit
 
-let getPrediction (crimesPerCapta: float) =
+let getPredictionModel (crimesPerCapta: float) =
     loadData ()
     |> transform
     |> predictPriceByCrimesPerCapta <| (crimesPerCapta)

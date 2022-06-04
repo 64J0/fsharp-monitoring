@@ -43,18 +43,18 @@ services:
 
   # AlertManager works great to send automated alerts when something goes down.
   # Make sure to propagate only useful alerts in a small quantity.
-  alertmanager:
-    image: prom/alertmanager
-    command:
-      - "--config.file=/etc/alertmanager/config.yml"
-      - "--storage.path=/alertmanager"
-    ports:
-      - 9093:9093
-    volumes:
-      - ./AlertManager/:/etc/alertmanager/
-    networks:
-      - monitoring-network
-    # restart: always
+  # alertmanager:
+  #   image: prom/alertmanager
+  #   command:
+  #     - "--config.file=/etc/alertmanager/config.yml"
+  #     - "--storage.path=/alertmanager"
+  #   ports:
+  #     - 9093:9093
+  #   volumes:
+  #     - ./AlertManager/:/etc/alertmanager/
+  #   networks:
+  #     - monitoring-network
+  #   # restart: always
 
   # cAdvisor (Container Advisor) provides container users an understanding of the 
   # resource usage and performance characteristics of their running containers. It 
