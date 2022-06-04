@@ -1,4 +1,8 @@
 # You can use this function in order to generate the bcrypt hashed password.
+# This password is later used in the Prometheus configuration to set the
+# authentication credentials.
+#
+# How to use it?
 # python3 gen-pass.py
 
 import getpass
