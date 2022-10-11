@@ -1,23 +1,43 @@
+# PROMETHEUS CONFIGURATION
+#
+# This file is used to configure the Prometheus server, telling it where
+# to look for metrics, define the scrape interval, the endpoint that is
+# going to be used to get the metrics, etc.
+#
+# You can find more in this link:
+# https://prometheus.io/docs/prometheus/latest/configuration/configuration/  
+
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+  scrape_interval: "15s"
+  scrape_timeout: "5s"
+  evaluation_interval: "15s"
+  external_labels:
+    enviroment: "development"
 
 rule_files:
   - "prometheus.rules.yml"
 
 scrape_configs:
-  - job_name: "prometheus"
+  # We can use Prometheus itself to monitor its server.
+  - job_name: "prometheus-server"
+    scrape_interval: "5s"
     static_configs:
       - targets: ["localhost:9090"]
 
+  # Service used to analyze resource usage and performance characteristics
+  # of running containers.
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
 
+  # The F# API we intend to monitor.
   - job_name: "fsharp-api"
-    metrics_path: /metrics
-    scheme: http
+    metrics_path: "/metrics"
+    scheme: "http"
+    basic_auth:
+      username: "metrics-operator"
+      password: "$2b$12$FBW9rKuyYibnAccTMw6zCe9OJgo4rtaZQ6t/k7O/fDU5M3xrNoc42" # Pl34s3_d0n7_h4ck_m3
     static_configs:
       - targets: ["api-server:8085"]
         labels:
-          group: "production"
+          group: "api"
