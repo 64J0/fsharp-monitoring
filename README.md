@@ -74,3 +74,21 @@ grabbing the metrics for our project from the Prometheus interface. The
 docker-compose configuration for the Prometheus service was mainly inspired by
 [this
 reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
+
+# Resource allocation
+
+Since this project uses a bunch of other services, I decided to limit the
+resources allocated for them. If you notice that some piece is not working
+properly, make sure to test other values for those resources (CPU and Memory).
+
+If you want to check how much resources your containers are currently consuming,
+you can use the following command in the terminal:
+
+```bash
+# check the resources usage for the containers
+docker stats
+```
+
+Example:
+
+![Example of container stats](./assets/container-stats.jpg "Image showing the resources stats of several containers running")
