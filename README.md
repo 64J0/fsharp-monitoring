@@ -11,6 +11,18 @@ Along with this code, I'm also writing an article that later will be posted in
 my blog to explain the core concepts of each tool used, with more details
 regarding the API built.
 
+## Project components
+
+In this project we're going to use the following tools and components:
+
+* FSharp API
+* Prometheus
+* Alertmanager
+* Grafana
+* cAdvisor
+* Grafana Loki
+* Promtail
+
 ## How to run it?
 
 Make sure you have the following tools installed:
