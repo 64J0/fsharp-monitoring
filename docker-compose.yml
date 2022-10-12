@@ -6,8 +6,8 @@ networks:
   monitoring-network: {}
 
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
+  prometheus_data: {}
+  grafana_data: {}
 
 services:
   # Our main application, the API built with F#.
@@ -25,6 +25,7 @@ services:
       - "8085:8085"
     networks:
       - monitoring-network
+    restart: always
 
   # The main tool used to collect and store metrics data.
   # It uses the pull model.
@@ -50,7 +51,7 @@ services:
       - alertmanager:alertmanager
     ports:
       - "9090:9090"
-    # restart: always
+    restart: always
 
   # AlertManager works great to send automated alerts when something goes down.
   # Make sure to propagate only useful alerts in a small quantity.
@@ -64,13 +65,14 @@ services:
     command:
       - "--config.file=/etc/alertmanager/config.yml"
       - "--storage.path=/alertmanager"
+      - "--web.config.file=/etc/alertmanager/web.yml"
     ports:
       - 9093:9093
     volumes:
       - ./AlertManager/:/etc/alertmanager/
     networks:
       - monitoring-network
-    # restart: always
+    restart: always
 
   # Grafana is the tool we use to create cool and instructive charts and graphs to
   # present the scraped data. It's critical to pick the right visualization category
@@ -94,7 +96,7 @@ services:
       - ./Grafana/config.monitoring
     ports:
       - "3000:3000"
-    # restart: always
+    restart: always
 
   # cAdvisor (Container Advisor) provides container users an understanding of the 
   # resource usage and performance characteristics of their running containers. It 
@@ -113,14 +115,15 @@ services:
           memory: "256M"
     volumes:
       - /:/rootfs:ro
-      - /var/run:/var/run:rw
+      - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
     ports:
       - 8080:8080
     networks:
       - monitoring-network
-    # restart: always
+    restart: always
     # deploy:
     #   mode: global
 
