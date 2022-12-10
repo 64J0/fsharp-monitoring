@@ -1,11 +1,13 @@
 module API.Router
 
-// https://saturnframework.org/explanations/routing.html
-
 open Saturn
 open Giraffe.Core
 
 open API
+
+// One can find more information about the routing configuration
+// of Saturn by consulting the following link:
+// https://saturnframework.org/explanations/routing.html
 
 let private customMiddleware = pipeline {
     set_header "x-pipeline-type" "fsharp-api"
@@ -28,6 +30,6 @@ let appRouter = router {
     not_found_handler (setStatusCode 404 >=> text "Endpoint not found.")
     pipe_through customMiddleware
 
-    get ("/test") (Controller.Test.index ())
+    get ("/health") (setStatusCode 200 >=> (Controller.Health.index ()))
     forward "/api" apiRouter
 }

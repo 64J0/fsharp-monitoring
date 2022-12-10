@@ -7,7 +7,7 @@
   <ItemGroup>
     <Compile Include="src/DataScience.fs" />
     <Compile Include="src/Prometheus.fs" />
-    <Compile Include="src/Controllers/Test.controller.fs" />
+    <Compile Include="src/Controllers/Health.controller.fs" />
     <Compile Include="src/Controllers/Prediction.controller.fs" />
     <Compile Include="src/Router.fs" />
     <Compile Include="src/Config.fs" />

@@ -12,9 +12,9 @@ let createCounter (name: string) (description: string) =
 let createGauge (name: string) (description: string) =
     Metrics.CreateGauge(name, description, GaugeConfiguration())
 
-// Summary for the index endpoint
-// https://github.com/prometheus-net/prometheus-net#summary
-// Summaries track the trends in events over time (10 minutes by default).
+/// Create a summary metric with a fixed configuration.
+/// https://github.com/prometheus-net/prometheus-net#summary
+/// Summaries track the trends in events over time (10 minutes by default).
 let createSummary (name: string) (description: string) (customLabels: List<string * string>) =
     let objectives =
         seq {
@@ -24,16 +24,6 @@ let createSummary (name: string) (description: string) (customLabels: List<strin
             new QuantileEpsilonPair(0.99, 0.005)
         } |> Immutable.ImmutableList.ToImmutableList
 
-    let labelNames =
-        customLabels
-        |> List.map fst
-        |> List.toArray
-
-    let labelValues =
-        customLabels
-        |> List.map snd
-        |> List.toArray
-
     Metrics.CreateSummary(
         name,
         description,
@@ -42,9 +32,10 @@ let createSummary (name: string) (description: string) (customLabels: List<strin
         )
     )
 
-// https://github.com/prometheus-net/prometheus-net#histogram
-// Histograms track the size and number of events in buckets. This allows for 
-// aggregatable calculation of quantiles.
+/// Create a histogram metric with a fixed configuration
+/// https://github.com/prometheus-net/prometheus-net#histogram
+/// Histograms track the size and number of events in buckets. This allows for 
+/// aggregatable calculation of quantiles.
 let createHistogram (name: string) (description: string) =
     Metrics.CreateHistogram(
         name,
@@ -52,6 +43,9 @@ let createHistogram (name: string) (description: string) =
         HistogramConfiguration()
     )
 
+/// Track the time consumed in a specific computation based on the histogram
+/// metric.
+/// https://github.com/prometheus-net/prometheus-net#measuring-operation-duration
 let trackComputationHistogram 
     (histogram: Histogram) 
     (computation: float -> float) 

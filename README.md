@@ -57,14 +57,21 @@ dotnet run
 ## How to test it?
 
 ```bash
-# test endpoint
-curl localhost:8085/test
+# health endpoint
+curl localhost:8085/health
+# result:
+# API instance is healthy!
 
 # trying the POST endpoint
 curl -X POST \
     -H "Accept: application/json" \
     -d '{"id":"1", "crimesPerCapta":"0.01"}' \
     localhost:8085/api/prediction
+# result:
+# Request OK
+# Id: 1
+# CrimesPerCapta: 0.010000
+# Price Prediction: 27.148332
 ```
 
 You can later see the metrics by visiting `http://localhost:8085/metrics` in

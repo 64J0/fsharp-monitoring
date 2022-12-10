@@ -14,11 +14,11 @@ let private setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
     | null -> defaultValue
     | _ -> readEnvVar
 
-let private HOST =
+let private HOST: string =
     System.Environment.GetEnvironmentVariable("HOST")
     |> setEnvVarDefaultValue ("localhost")
 
-let private PORT =
+let private PORT: string =
     System.Environment.GetEnvironmentVariable("PORT")
     |> setEnvVarDefaultValue ("8085")
 
@@ -28,6 +28,7 @@ let private loggingConfig (builder: ILoggingBuilder) =
 
 // https://gist.github.com/pecigonzalo/463ebb7d6f8ed7b8b102f000edb8cf6b#metrics
 // TODO: start the metrics server in a different PORT
+// this way we can segregate the API server from the metrics server
 let private configureApp (app: IApplicationBuilder) =
     app.UseHttpMetrics().UseMetricServer()
 
