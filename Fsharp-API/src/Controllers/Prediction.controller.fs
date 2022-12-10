@@ -10,12 +10,6 @@ type CreatePayload =
     { id: int
       crimesPerCapta: float }
 
-let private postSummaryLabels =
-    [
-        ("endpoint", "/api/prediction")
-        ("verb", "post")
-    ]
-
 /// Prometheus Counter for the POST endpoint.
 let private predictionCounter =
     let counterName = "post_prediction_counter"
@@ -26,7 +20,7 @@ let private predictionCounter =
 let private predictionSummary =
     let summaryName = "post_prediction_summary"
     let summaryDescription = "Prometheus summary metric for the POST /api/prediction endpoint."
-    createSummary (summaryName) (summaryDescription) (postSummaryLabels)
+    createSummary (summaryName) (summaryDescription)
 
 let private predictionHistogram =
     let histogramName = "post_prediction_histogram"

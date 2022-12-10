@@ -15,7 +15,7 @@ let createGauge (name: string) (description: string) =
 /// Create a summary metric with a fixed configuration.
 /// https://github.com/prometheus-net/prometheus-net#summary
 /// Summaries track the trends in events over time (10 minutes by default).
-let createSummary (name: string) (description: string) (customLabels: List<string * string>) =
+let createSummary (name: string) (description: string) =
     let objectives =
         seq {
             new QuantileEpsilonPair(0.5, 0.05)
