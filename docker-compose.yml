@@ -124,8 +124,6 @@ services:
     networks:
       - monitoring-network
     restart: always
-    # deploy:
-    #   mode: global
 
   # https://github.com/grafana/loki/blob/main/production/docker-compose.yaml
   # loki:

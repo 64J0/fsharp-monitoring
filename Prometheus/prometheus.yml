@@ -6,21 +6,23 @@
 #
 # You can find more in this link:
 # https://prometheus.io/docs/prometheus/latest/configuration/configuration/  
-
+#
 global:
-  scrape_interval: "15s"
-  scrape_timeout: "5s"
-  evaluation_interval: "15s"
+  scrape_interval: "15s" # how often Prometheus will scrape targets
+  evaluation_interval: "15s" # how often Prometheus will evaluate rules
+  scrape_timeout: "10s"
   external_labels:
     enviroment: "development"
 
+# specifies the location of any rules we want the Prometheus server to load
 rule_files:
   - "prometheus.rules.yml"
 
+# what resources Prometheus monitors
 scrape_configs:
   # We can use Prometheus itself to monitor its server.
   - job_name: "prometheus-server"
-    scrape_interval: "5s"
+    scrape_interval: "15s" # override for individual targets
     static_configs:
       - targets: ["localhost:9090"]
 
@@ -32,12 +34,13 @@ scrape_configs:
 
   # The F# API we intend to monitor.
   - job_name: "fsharp-api"
+    honor_labels: true
     metrics_path: "/metrics"
     scheme: "http"
     basic_auth:
       username: "metrics-operator"
       password: "$2b$12$FBW9rKuyYibnAccTMw6zCe9OJgo4rtaZQ6t/k7O/fDU5M3xrNoc42" # Pl34s3_d0n7_h4ck_m3
     static_configs:
-      - targets: ["api-server:8085"]
+      - targets: ["fsharp-api-server:8085"]
         labels:
           group: "api"

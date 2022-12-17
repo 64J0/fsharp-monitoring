@@ -2,10 +2,15 @@
 # promtool check rules /path/to/example.rules.yml
 
 groups:
-- name: "cpu-node"
+- name: "container-cpu-cadvisor"
   rules:
-  - record: job_instance_mode:node_cpu_seconds:avg_rate5m
-    expr: avg by (job, instance, mode) (rate(node_cpu_seconds_total[5m]))
+  - record: job_instance_mode:container_cpu_usage_seconds_total:avg_rate5m
+    expr: avg by (job, instance, mode) (rate(container_cpu_usage_seconds_total[5m]))
+
+- name: "post-prediction-endpoint-rate"
+  rules:
+  - record: post_prediction_counter:rate1m
+    expr: rate(post_prediction_counter[1m])
 
 - name: "alert-examples"
   rules:
@@ -23,6 +28,8 @@ groups:
   - alert: APIHighRequestLatency
     expr: api_http_request_latencies_second{quantile="0.5"} > 1
     for: 10m
+    labels:
+      severity: page
     annotations:
       summary: "High request latency on {{ $labels.instance }}"
       description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
