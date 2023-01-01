@@ -4,7 +4,7 @@
 
 This project consists in a simple F# REST API to exemplify how to work with
 Prometheus, Grafana, AlertManager, and other tools. To make the connection
-between this .NET project and the Prometheus server, we're use the
+between this .NET project and the Prometheus server, we're using the
 [prometheus-net](https://github.com/prometheus-net/prometheus-net) tool.
 
 Along with this code, I'm also writing an article that later will be posted in
@@ -18,18 +18,44 @@ In this project we're going to use the following tools and components:
 * FSharp API
 * Prometheus
 * Alertmanager
-* Grafana
 * cAdvisor
-* Grafana Loki
-* Promtail
+* Grafana
 
-## How to run it?
+## How to run the containerized project?
 
 Make sure you have the following tools installed:
 
+* `Docker version 20.10.22`
+* `docker-compose version 1.29.1`
+
+Then, you can use the following commands:
+
+```bash
+# recommended process using `docker-compose'
+docker-compose up -d
+
+# if you don't want to use the `docker-compose' command, you can, first
+# build the docker image for the API
+docker build -t fsharp-api:v1 .
+
+# you can run the API in a standalone process, although this is not
+# my recommended process. Use the `docker-compose' command instead.
+docker run -d -e HOST="0.0.0.0" -p 8085:8085 fsharp-api:v1
+```
+
+When this project is running you can visit `http://localhost:9090` and start
+grabbing the metrics for our project from the Prometheus interface. The
+docker-compose configuration for the Prometheus service was mainly inspired by
+[this
+reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
+
+## How to run the API locally?
+
+For further improvements in the API code, I recommend running the project with a
+local .NET SDK service. In the context of the most recent development, I'm using
+the following version:
+
 * `.NET SDK version 6.0.200`
-* `docker`
-* `docker-compose`
 
 ```bash
 # use this command to check your installed .NET SDK versions
@@ -76,23 +102,6 @@ curl -X POST \
 
 You can later see the metrics by visiting `http://localhost:8085/metrics` in
 your browser.
-
-## Run with Docker-compose
-
-```bash
-# docker image standalone
-docker build -t fsharp-api:v1 .
-docker run -d -e HOST="0.0.0.0" -p 8085:8085 fsharp-api:v1
-
-# docker-compose
-docker-compose up -d
-```
-
-When this project is running you can visit `http://localhost:9090` and start
-grabbing the metrics for our project from the Prometheus interface. The
-docker-compose configuration for the Prometheus service was mainly inspired by
-[this
-reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
 
 # Resource allocation
 
