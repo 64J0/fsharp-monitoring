@@ -8,39 +8,28 @@
 # https://prometheus.io/docs/prometheus/latest/configuration/configuration/  
 #
 global:
-  scrape_interval: "15s" # how often Prometheus will scrape targets
-  evaluation_interval: "15s" # how often Prometheus will evaluate rules
+  scrape_interval: "15s"
+  evaluation_interval: "15s"
   scrape_timeout: "10s"
   external_labels:
     enviroment: "development"
 
-# specifies the location of any rules we want the Prometheus server to load
 rule_files:
   - "prometheus.rules.yml"
 
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-            - "alertmanager:9093"
-  
-# what resources Prometheus monitors
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#             - "alertmanager:9093"
+
 scrape_configs:
-  # We can use Prometheus itself to monitor its server.
   - job_name: "prometheus-server"
-    scrape_interval: "15s" # override for individual targets
+    scrape_interval: "30s"
     static_configs:
       - targets: ["localhost:9090"]
 
-  # Service used to analyze resource usage and performance characteristics
-  # of running containers.
-  - job_name: "cadvisor"
-    static_configs:
-      - targets: ["cadvisor:8080"]
-
-  # The F# API we intend to monitor.
   - job_name: "fsharp-api"
-    honor_labels: true
     metrics_path: "/metrics"
     scheme: "http"
     basic_auth:
@@ -48,5 +37,3 @@ scrape_configs:
       password: "$2b$12$FBW9rKuyYibnAccTMw6zCe9OJgo4rtaZQ6t/k7O/fDU5M3xrNoc42" # Pl34s3_d0n7_h4ck_m3
     static_configs:
       - targets: ["fsharp-api-server:8085"]
-        labels:
-          group: "api"
