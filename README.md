@@ -17,8 +17,6 @@ In this project we're going to use the following tools and components:
 
 * FSharp API
 * Prometheus
-* Alertmanager
-* cAdvisor
 * Grafana
 
 ## How to run the containerized project?

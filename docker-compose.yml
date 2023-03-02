@@ -42,36 +42,11 @@ services:
       - "--web.config.file=/etc/prometheus/web.yml"
     networks:
       - monitoring-network
-    depends_on:
-      - cadvisor
     volumes:
       - ./Prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
-    links:
-      - alertmanager:alertmanager
     ports:
       - "9090:9090"
-    restart: always
-
-  # AlertManager works great to send automated alerts when something goes down.
-  # Make sure to propagate only useful alerts in a small quantity.
-  alertmanager:
-    image: prom/alertmanager:v0.24.0
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: "256M"
-    command:
-      - "--config.file=/etc/alertmanager/config.yml"
-      - "--storage.path=/alertmanager"
-      - "--web.config.file=/etc/alertmanager/web.yml"
-    ports:
-      - 9093:9093
-    volumes:
-      - ./AlertManager/:/etc/alertmanager/
-    networks:
-      - monitoring-network
     restart: always
 
   # Grafana is the tool we use to create cool and instructive charts and graphs to
@@ -98,56 +73,3 @@ services:
       - "3000:3000"
     restart: always
 
-  # cAdvisor (Container Advisor) provides container users an understanding of the 
-  # resource usage and performance characteristics of their running containers. It 
-  # is a running daemon that collects, aggregates, processes, and exports information 
-  # about running containers. Specifically, for each container it keeps resource 
-  # isolation parameters, historical resource usage, histograms of complete historical 
-  # resource usage and network statistics. This data is exported by container and 
-  # machine-wide.
-  # reference: https://github.com/google/cadvisor
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.45.0
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: "256M"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    ports:
-      - 8080:8080
-    networks:
-      - monitoring-network
-    restart: always
-
-  # https://github.com/grafana/loki/blob/main/production/docker-compose.yaml
-  # loki:
-  #   image: grafana/loki:main-543ea78
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "0.25"
-  #         memory: "256M"
-  #   ports:
-  #     - "3100:3100"
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   networks:
-  #     - monitoring-network
-
-  # promtail:
-  #   image: grafana/promtail:main-5dc27e8
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "0.25"
-  #         memory: "256M"
-  #   volumes:
-  #     - /var/log:/var/log
-  #   command: -config.file=/etc/promtail/config.yml
-  #   networks:
-  #     - monitoring-network
