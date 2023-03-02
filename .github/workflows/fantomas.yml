@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'Fsharp-API/*'
+      - 'Fsharp-API/**'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
