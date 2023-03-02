@@ -22,32 +22,20 @@ let createSummary (name: string) (description: string) =
             new QuantileEpsilonPair(0.9, 0.05)
             new QuantileEpsilonPair(0.95, 0.01)
             new QuantileEpsilonPair(0.99, 0.005)
-        } |> Immutable.ImmutableList.ToImmutableList
+        }
+        |> Immutable.ImmutableList.ToImmutableList
 
-    Metrics.CreateSummary(
-        name,
-        description,
-        new SummaryConfiguration(
-            Objectives = objectives
-        )
-    )
+    Metrics.CreateSummary(name, description, new SummaryConfiguration(Objectives = objectives))
 
 /// Create a histogram metric with a fixed configuration
 /// https://github.com/prometheus-net/prometheus-net#histogram
-/// Histograms track the size and number of events in buckets. This allows for 
+/// Histograms track the size and number of events in buckets. This allows for
 /// aggregatable calculation of quantiles.
 let createHistogram (name: string) (description: string) =
-    Metrics.CreateHistogram(
-        name,
-        description,
-        HistogramConfiguration()
-    )
+    Metrics.CreateHistogram(name, description, HistogramConfiguration())
 
 /// Track the time consumed in a specific computation based on the histogram
 /// metric.
 /// https://github.com/prometheus-net/prometheus-net#measuring-operation-duration
-let trackComputationHistogram 
-    (histogram: Histogram) 
-    (computation: float -> float) 
-    (data: float) =
+let trackComputationHistogram (histogram: Histogram) (computation: float -> float) (data: float) =
     using (histogram.NewTimer()) (fun _ -> computation data)
