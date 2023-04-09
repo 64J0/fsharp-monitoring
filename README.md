@@ -75,7 +75,7 @@ dotnet build
 # start the server
 dotnet run
 # watch mode for development
-# dotnet run --watch
+# dotnet watch run
 ```
 
 ## How to test it?
