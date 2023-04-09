@@ -8,7 +8,7 @@ open Microsoft.Extensions.Logging
 open Prometheus
 open System
 
-open API
+open API.Router
 
 let private setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
     match readEnvVar with
@@ -34,7 +34,7 @@ let serverConfig =
         logging loggingConfig
         use_antiforgery
 
-        use_router Router.appRouter
+        use_router appRouter
         url (sprintf "http://%s:%s" HOST PORT)
         use_gzip
 

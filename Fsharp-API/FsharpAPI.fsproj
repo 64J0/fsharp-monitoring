@@ -9,7 +9,8 @@
     <Compile Include="src/Monitoring/Prometheus.fs" />
     <Compile Include="src/Controllers/Health.controller.fs" />
     <Compile Include="src/Controllers/Prediction.controller.fs" />
-    <Compile Include="src/Router.fs" />
+    <Compile Include="src/Router/Prometheus.middleware.fs" />
+    <Compile Include="src/Router/Router.fs" />
     <Compile Include="src/Config.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
