@@ -1,6 +1,7 @@
-module API.DataScience
+// Inspired by:
+// - https://fslab.org/content/tutorials/001_getting-started.html
 
-// From: https://fslab.org/content/tutorials/001_getting-started.html
+module API.DataScience
 
 open FSharp.Data
 open Deedle

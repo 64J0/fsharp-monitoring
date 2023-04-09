@@ -5,8 +5,8 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src/DataScience.fs" />
-    <Compile Include="src/Prometheus.fs" />
+    <Compile Include="src/DataScience/DataScience.fs" />
+    <Compile Include="src/Monitoring/Prometheus.fs" />
     <Compile Include="src/Controllers/Health.controller.fs" />
     <Compile Include="src/Controllers/Prediction.controller.fs" />
     <Compile Include="src/Router.fs" />

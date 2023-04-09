@@ -1,8 +1,8 @@
 ﻿open Saturn
 
-open API
+open API.Config
 
 [<EntryPoint>]
 let main (args: string[]) =
-    run Config.serverConfig
-    0 // return an integer exit code
+    run serverConfig
+    0
