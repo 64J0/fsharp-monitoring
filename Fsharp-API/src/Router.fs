@@ -8,10 +8,7 @@ open API.Controller
 // https://github.com/SaturnFramework/Saturn/issues/225
 // Requests must have the header: Accept: application/json
 // curl -H "Accept: application/json" localhost:8085/api/test
-let private apiPipeline = 
-    pipeline { 
-        plug acceptJson
-    }
+let private apiPipeline = pipeline { plug acceptJson }
 
 let private apiRouter =
     router {
