@@ -11,11 +11,11 @@ let prometheusPreOperationsMiddleware = pipeline { plug requestCounter }
 // https://github.com/SaturnFramework/Saturn/issues/225
 // Requests must have the header: Accept: application/json
 // curl -H "Accept: application/json" localhost:8085/api/test
-let private apiPipeline = pipeline { plug acceptJson }
+let private apiPredictionPipeline = pipeline { plug acceptJson }
 
-let private apiRouter =
+let private apiPredictionRouter =
     router {
-        pipe_through apiPipeline
+        pipe_through apiPredictionPipeline
 
         forward ("/prediction") (Prediction.apiController)
     }
@@ -27,5 +27,5 @@ let appRouter =
 
         get ("/health") (setStatusCode 200 >=> (Health.index ()))
 
-        forward "/api" apiRouter
+        forward ("/api") (apiPredictionRouter)
     }

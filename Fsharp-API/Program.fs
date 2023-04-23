@@ -1,6 +1,6 @@
 ﻿open Saturn
 
-open API.Config
+open API.Server
 
 [<EntryPoint>]
 let main (args: string[]) =

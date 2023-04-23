@@ -11,7 +11,7 @@
     <Compile Include="src/Controllers/Prediction.controller.fs" />
     <Compile Include="src/Router/Prometheus.middleware.fs" />
     <Compile Include="src/Router/Router.fs" />
-    <Compile Include="src/Config.fs" />
+    <Compile Include="src/Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
