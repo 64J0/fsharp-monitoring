@@ -26,8 +26,7 @@ let private loggingConfig (builder: ILoggingBuilder) =
     builder.SetMinimumLevel LogLevel.Information |> ignore
 
 // https://www.compositional-it.com/news-blog/dependency-injection-with-asp-net-and-f/
-let private configureServices (services : IServiceCollection) =
-    services.AddHttpClient()
+let private configureServices (services: IServiceCollection) = services.AddHttpClient()
 
 // https://gist.github.com/pecigonzalo/463ebb7d6f8ed7b8b102f000edb8cf6b#metrics
 // TODO: start the metrics server in a different PORT
