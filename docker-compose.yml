@@ -53,7 +53,7 @@ services:
   # present the scraped data. It's critical to pick the right visualization category
   # in order to facilitate the process of identifying problems and their cause.
   grafana:
-    image: grafana/grafana-enterprise:9.1.8-ubuntu
+    image: grafana/grafana:8.5.22-ubuntu
     deploy:
       resources:
         limits:
