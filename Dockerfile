@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
 WORKDIR /app
 
 # copy main project
-COPY Fsharp-API/ .
+COPY fsharp-api/ .
 
 RUN dotnet publish -c Release -o ./bin
 
