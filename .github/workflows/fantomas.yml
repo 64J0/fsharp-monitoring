@@ -30,9 +30,9 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: Tool Restore
-        working-directory: Fsharp-API
+        working-directory: fsharp-api
         run: dotnet tool restore
 
       - name: Lint
-        working-directory: Fsharp-API
+        working-directory: fsharp-api
         run: dotnet fantomas -r --check .
