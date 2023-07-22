@@ -8,6 +8,9 @@ RUN dotnet publish -c Release -o ./bin
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/nightly/aspnet:7.0-jammy-chiseled AS runtime
+
+LABEL org.opencontainers.image.source=https://github.com/64J0/fsharp-monitoring
+
 WORKDIR /app
 
 COPY --from=build /app/bin .
