@@ -38,7 +38,7 @@ docker build -t fsharp-api:v1 .
 
 # you can run the API in a standalone process, although this is not
 # my recommended process. Use the `docker-compose' command instead.
-docker run -d -e HOST="0.0.0.0" -p 8085:8085 fsharp-api:v1
+docker run -d -e HOST="0.0.0.0" -p 8085:8085 -p 9085:9085 fsharp-api:v1
 ```
 
 When this project is running you can visit `http://localhost:9090` and start
@@ -64,7 +64,7 @@ Next step is to install the required dependencies, using the following commands:
 
 ```bash
 # get inside the API directory
-cd Fsharp-API/
+cd fsharp-api/
 
 # restore nuget packages
 dotnet tool restore

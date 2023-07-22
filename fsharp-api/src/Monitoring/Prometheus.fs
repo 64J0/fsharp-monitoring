@@ -1,12 +1,12 @@
-module API.Prometheus
+module API.MonitoringPrometheus
 
 open System.Collections
 open Prometheus
 
 /// This function is used to create a counter so we can keep track of how many
 /// times some operation is done.
-let createCounter (name: string) (description: string) =
-    Metrics.CreateCounter(name, description, CounterConfiguration())
+let createCounter (name: string) (description: string) (labels: string array) =
+    Metrics.CreateCounter(name, description, labels)
 
 /// This function is used to create a new gauge metric.
 let createGauge (name: string) (description: string) =
@@ -31,8 +31,8 @@ let createSummary (name: string) (description: string) =
 /// https://github.com/prometheus-net/prometheus-net#histogram
 /// Histograms track the size and number of events in buckets. This allows for
 /// aggregatable calculation of quantiles.
-let createHistogram (name: string) (description: string) =
-    Metrics.CreateHistogram(name, description, HistogramConfiguration())
+let createHistogram (name: string) (description: string) (labels: string array) =
+    Metrics.CreateHistogram(name, description, labels)
 
 /// Track the time consumed in a specific computation based on the histogram
 /// metric.

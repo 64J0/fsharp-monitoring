@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src/DataScience/DataScience.fs" />
@@ -11,15 +11,15 @@
     <Compile Include="src/Controllers/Prediction.controller.fs" />
     <Compile Include="src/Router/Prometheus.middleware.fs" />
     <Compile Include="src/Router/Router.fs" />
-    <Compile Include="src/Config.fs" />
+    <Compile Include="src/Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Deedle" Version="2.5.0" />
     <PackageReference Include="FSharp.Data" Version="4.2.8" />
     <PackageReference Include="FSharp.Stats" Version="0.4.5" />
-    <PackageReference Include="prometheus-net" Version="6.0.0" />
-    <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
+    <PackageReference Include="prometheus-net" Version="8.0.1" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Saturn" Version="0.16.1" />
   </ItemGroup>
 </Project>

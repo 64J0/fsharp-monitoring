@@ -36,4 +36,4 @@ scrape_configs:
       username: "metrics-operator"
       password: "$2b$12$FBW9rKuyYibnAccTMw6zCe9OJgo4rtaZQ6t/k7O/fDU5M3xrNoc42" # Pl34s3_d0n7_h4ck_m3
     static_configs:
-      - targets: ["fsharp-api-server:8085"]
+      - targets: ["fsharp-api-server:9085"]
