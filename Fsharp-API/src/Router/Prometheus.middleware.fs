@@ -1,22 +1,49 @@
 module API.PrometheusMiddleware
 
 open Microsoft.AspNetCore.Http
+
 open Giraffe
-open API.Prometheus
+open Prometheus
+
+open API.MonitoringPrometheus
 
 let requestCounter: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            let endpointCounterName =
-                ctx.Request.Path.Value + "_counter"
-                |> (fun s -> s.Replace("/", "_").Replace(".", "_").[1..])
+            let counterName = "api_request_count_total"
 
-            let endpointCounterDescription =
-                sprintf "Endpoint request counter. Path: %s" ctx.Request.Path.Value
+            let counterDescription = "API generic request counter."
 
-            let endpointCounter = createCounter endpointCounterName endpointCounterDescription
+            let counterLabelNames = [| "endpoint"; "method"; "status_code" |]
 
-            endpointCounter.Inc()
+            let requestCounter =
+                createCounter (counterName) (counterDescription) (counterLabelNames)
+
+            let endpoint = ctx.Request.Path.Value
+            let method = ctx.Request.Method
+            let statusCode = ctx.Response.StatusCode |> string
+
+            requestCounter.WithLabels(endpoint, method, statusCode).Inc()
 
             return! next ctx
+        }
+
+let requestDuration: HttpHandler =
+    fun (next: HttpFunc) (ctx: HttpContext) ->
+        task {
+            let histogramName = "api_request_duration_seconds"
+
+            let histogramDescription = "API generic request duration in seconds."
+
+            let histogramLabelNames = [| "endpoint"; "method" |]
+
+            let histogramRequestDuration =
+                createHistogram (histogramName) (histogramDescription) (histogramLabelNames)
+
+            let endpoint = ctx.Request.Path.Value
+            let method = ctx.Request.Method
+
+            let histogram = histogramRequestDuration.WithLabels(endpoint, method)
+
+            return! using (histogram.NewTimer()) (fun _ -> task { return! next ctx })
         }
