@@ -11,6 +11,8 @@ Along with this code, I'm also writing an article that later will be posted in
 my blog to explain the core concepts of each tool used, with more details
 regarding the API built.
 
+Related project: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics).
+
 ## Project components
 
 In this project we're going to use the following tools and components:
