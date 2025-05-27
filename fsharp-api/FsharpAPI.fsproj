@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Env.fs" />
-    <Compile Include="src/DataScience/DataScience.fs" />
-    <Compile Include="src/Monitoring/Prometheus.fs" />
-    <Compile Include="src/Controllers/Health.controller.fs" />
-    <Compile Include="src/Controllers/Prediction.controller.fs" />
-    <Compile Include="src/Router/Prometheus.middleware.fs" />
-    <Compile Include="src/Router/Router.fs" />
-    <Compile Include="src/Server.fs" />
+    <Compile Include="DataScience/DataScience.fs" />
+    <Compile Include="Monitoring/Prometheus.fs" />
+    <Compile Include="Controllers/Health.controller.fs" />
+    <Compile Include="Controllers/Prediction.controller.fs" />
+    <Compile Include="Router/Prometheus.middleware.fs" />
+    <Compile Include="Router/Router.fs" />
+    <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
