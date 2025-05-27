@@ -1,7 +1,5 @@
 # https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml
 # https://docs.docker.com/compose/production/
-version: "3.9"
-
 services:
   fsharp-api-server:
     build: .
