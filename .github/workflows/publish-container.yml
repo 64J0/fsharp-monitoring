@@ -9,13 +9,10 @@ permissions:
 jobs:
   build-and-push-container:
     name: Build and publish container
-    runs-on: ubuntu-22.04
-    services:
-      docker:
-        image: docker:20.10.17-dind
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Docker setup
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
