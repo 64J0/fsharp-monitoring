@@ -17,7 +17,9 @@ COPY --from=build /app/bin .
 
 # normal server
 EXPOSE 8085
+
 # Prometheus metrics server
+# must not be exposed publicly
 EXPOSE 9085
 
 ENTRYPOINT ["/app/FsharpAPI"]
