@@ -25,8 +25,8 @@ In this project we're going to use the following tools and components:
 
 Make sure you have the following tools installed:
 
-* `Docker version 20.10.22`
-* `docker-compose version 1.29.1`
+* `Docker version 28.1.1`
+* `Docker Compose version v2.35.1`
 
 Then, you can use the following commands:
 
@@ -46,8 +46,7 @@ docker run -d -e HOST="0.0.0.0" -p 8085:8085 -p 9085:9085 fsharp-api:v1
 When this project is running you can visit `http://localhost:9090` and start
 grabbing the metrics for our project from the Prometheus interface. The
 docker-compose configuration for the Prometheus service was mainly inspired by
-[this
-reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
+[this reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
 
 ## How to run the API locally?
 
@@ -55,7 +54,7 @@ For further improvements in the API code, I recommend running the project with a
 local .NET SDK service. In the context of the most recent development, I'm using
 the following version:
 
-* `.NET SDK version 6.0.200`
+* `.NET SDK version 9.0.xxx`
 
 ```bash
 # use this command to check your installed .NET SDK versions
@@ -69,7 +68,7 @@ Next step is to install the required dependencies, using the following commands:
 cd fsharp-api/
 
 # restore nuget packages
-dotnet tool restore
+dotnet restore
 
 # make sure you can build the project
 dotnet build
