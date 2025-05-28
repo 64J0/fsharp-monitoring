@@ -1,4 +1,4 @@
-# You can use this function in order to generate the bcrypt hashed password.
+# Use this function to generate the bcrypt hashed password.
 # This password is later used in the Prometheus configuration to set the
 # authentication credentials.
 #
