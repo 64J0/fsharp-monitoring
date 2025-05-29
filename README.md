@@ -1,23 +1,19 @@
 # Monitoring F# API
 
-:warning: Work in progress!
+This project consists in a F# REST API to exemplify how to work with Prometheus,
+Grafana, AlertManager, and other monitoring and alerting tools. To make the
+connection between this .NET project and the Prometheus server, we're using the
+[prometheus-net](https://github.com/prometheus-net/prometheus-net) package.
 
-This project consists in a simple F# REST API to exemplify how to work with
-Prometheus, Grafana, AlertManager, and other tools. To make the connection
-between this .NET project and the Prometheus server, we're using the
-[prometheus-net](https://github.com/prometheus-net/prometheus-net) tool.
-
-Along with this code, I'm also writing an article that later will be posted in
-my blog to explain the core concepts of each tool used, with more details
-regarding the API built.
-
-Related project: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics).
++ Related project :: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics).
 
 ## Project components
 
 In this project we're going to use the following tools and components:
 
 * FSharp API
+  * Using ASP.NET and Giraffe
+  * prometheus-net
 * Prometheus
 * Grafana
 
@@ -31,10 +27,10 @@ Make sure you have the following tools installed:
 Then, you can use the following commands:
 
 ```bash
-# recommended process using `docker-compose'
-docker-compose up -d
+# recommended process using `docker compose'
+docker compose up -d
 
-# if you don't want to use the `docker-compose' command, you can, first
+# if you don't want to use the `docker compose' command, you can, first
 # build the docker image for the API
 docker build -t fsharp-api:v1 .
 
@@ -90,7 +86,7 @@ curl localhost:8085/health
 # trying the POST endpoint
 curl -X POST \
     -H "Accept: application/json" \
-    -d '{"id":"1", "crimesPerCapta":"0.01"}' \
+    -d '{"id":1, "crimesPerCapta":0.01}' \
     localhost:8085/api/prediction
 # result:
 # Request OK
