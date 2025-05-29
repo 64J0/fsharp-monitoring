@@ -7,17 +7,19 @@ open Prometheus
 
 open API.MonitoringPrometheus
 
+// TODO debug why this middleware is trying to change the response status code
+// after the request finishes
 let requestCounter: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
             let counterName = "api_request_count_total"
-
             let counterDescription = "API generic request counter."
-
             let counterLabelNames = [| "endpoint"; "method"; "status_code" |]
 
             let requestCounter =
                 createCounter (counterName) (counterDescription) (counterLabelNames)
+
+            let! _ = next ctx
 
             let endpoint = ctx.Request.Path.Value
             let method = ctx.Request.Method
@@ -25,16 +27,15 @@ let requestCounter: HttpHandler =
 
             requestCounter.WithLabels(endpoint, method, statusCode).Inc()
 
-            return! next ctx
+            // Skip the remaining pipeline
+            return None
         }
 
 let requestDuration: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
             let histogramName = "api_request_duration_seconds"
-
             let histogramDescription = "API generic request duration in seconds."
-
             let histogramLabelNames = [| "endpoint"; "method" |]
 
             let histogramRequestDuration =

@@ -11,12 +11,15 @@ open Giraffe
 open Giraffe.EndpointRouting
 open Prometheus
 
+open API.PrometheusMiddleware
 open API.Router
 
 let PROMETHEUS_PORT: uint16 = 9085us
 
 let notFoundHandler =
-    int HttpStatusCode.NotFound |> setStatusCode
+    requestCounter
+    >=> requestDuration
+    >=> (int HttpStatusCode.NotFound |> setStatusCode)
     >=> json {| Message = "Route not Found" |}
 
 let private configureLogging (loggingBuilder: ILoggingBuilder) =
