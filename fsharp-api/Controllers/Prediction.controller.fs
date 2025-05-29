@@ -1,8 +1,9 @@
 module API.Controller.Prediction
 
+open System.Net
 open Microsoft.AspNetCore.Http
+
 open Giraffe
-open Saturn
 
 open API.DataScience
 
@@ -13,16 +14,17 @@ let createController () : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
             // TODO: deal with problems when parsing the payload.
-            let! cnf = Controller.getJson<CreatePayload> ctx
+            let serializer = ctx.GetJsonSerializer()
+            let! cnf = serializer.DeserializeAsync<CreatePayload> ctx.Request.Body
 
             let prediction = getPredictionModel cnf.crimesPerCapta
 
+            // TODO: create a type for this return structure
             let result =
-                (sprintf
-                    "Request OK\nId: %d\nCrimesPerCapta: %f\nPrice Prediction: %f"
-                    (cnf.id)
-                    (cnf.crimesPerCapta)
-                    (prediction))
+                {| Message = "OK"
+                   Id = cnf.id
+                   CrimesPerCapta = cnf.crimesPerCapta
+                   PricePrediction = prediction |}
 
-            return! (setStatusCode 200 >=> text result) next ctx
+            return! (int HttpStatusCode.OK |> setStatusCode >=> json result) next ctx
         }

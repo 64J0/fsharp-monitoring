@@ -6,7 +6,7 @@ module API.DataScience
 open FSharp.Data
 open Deedle
 open FSharp.Stats
-open Fitting.LinearRegression.OrdinaryLeastSquares
+open Fitting.LinearRegression.OLS
 
 let private loadData () =
     // Retrieve data using the FSharp.Data package
@@ -34,8 +34,8 @@ let private predictPriceByCrimesPerCapta (data: Frame<'a, string>) =
     |> Series.values
     |> Seq.toList
     |> List.unzip
-    |> (fun (x1, x2) -> Linear.Univariable.coefficient (vector x1) (vector x2))
-    |> Linear.Univariable.fit
+    |> (fun (x1, x2) -> Linear.Univariable.fit (vector x1) (vector x2))
+    |> Linear.Univariable.predict
 
 let getPredictionModel (crimesPerCapta: float) =
     loadData () |> transform |> predictPriceByCrimesPerCapta <| (crimesPerCapta)

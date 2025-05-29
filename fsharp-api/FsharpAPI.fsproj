@@ -12,15 +12,14 @@
     <Compile Include="Controllers/Prediction.controller.fs" />
     <Compile Include="Router/Prometheus.middleware.fs" />
     <Compile Include="Router/Router.fs" />
-    <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Deedle" Version="2.5.0" />
-    <PackageReference Include="FSharp.Data" Version="4.2.8" />
-    <PackageReference Include="FSharp.Stats" Version="0.4.5" />
-    <PackageReference Include="prometheus-net" Version="8.0.1" />
-    <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
-    <PackageReference Include="Saturn" Version="0.16.1" />
+    <PackageReference Include="Deedle" Version="3.0.0" />
+    <PackageReference Include="FSharp.Data" Version="6.6.0" />
+    <PackageReference Include="FSharp.Stats" Version="0.6.0" />
+    <PackageReference Include="Giraffe" Version="8.0.0-alpha-002" />
+    <PackageReference Include="prometheus-net" Version="8.2.1" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
   </ItemGroup>
 </Project>

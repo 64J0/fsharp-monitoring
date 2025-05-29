@@ -8,6 +8,7 @@ let private setEnvVarDefaultValue (defaultValue: string) (readEnvVar: string) =
     | _ -> readEnvVar
 
 let HOST =
-    Environment.GetEnvironmentVariable "HOST" |> setEnvVarDefaultValue "localhost"
+    Environment.GetEnvironmentVariable "HOST"
+    |> setEnvVarDefaultValue "http://localhost"
 
 let PORT = Environment.GetEnvironmentVariable "PORT" |> setEnvVarDefaultValue "8085"
