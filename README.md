@@ -76,6 +76,28 @@ checking the metrics for the API from the Prometheus interface. The
 docker compose configuration for the Prometheus service was mainly inspired by
 [this reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
 
++ Notice that the API base image is a chiseled variant. If you're not aware of
+  what this means, I highly recommend taking a look at this article from
+  Microsoft's DevBlogs: [link](https://devblogs.microsoft.com/dotnet/announcing-dotnet-chiseled-containers/).
+
+#### Dashboards
+
+When the Grafana container starts, it's configured to automatically connect to
+the Prometheus data source and load two dashboards. You can access the Grafana
+platform through the `http://localhost:300` address.
+
+The first time you log in you can use the "default" credentials:
+
+- Username :: admin
+- Password :: admin
+
+Notice that the UI will ask you to change the password, but you can just skip
+this for now.
+
+Sample:
+
+![Dashboard sample](./assets/sample-dashboard.png "Sample Grafana dashboard")
+
 ### How to run the API locally?
 
 For further improvements in the API code, I recommend running the project with a
@@ -142,6 +164,10 @@ curl -X POST \
 
 You can later see the metrics by visiting `http://localhost:9085/metrics` in
 your browser.
+
+## Load test
+
+TODO https://nbomber.com/docs/getting-started/overview/
 
 ## Resource allocation
 
