@@ -7,7 +7,7 @@ connection between this .NET project and the Prometheus server, we're using the
 
 + Related project :: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics).
 
-## Project components
+### Project components
 
 In this project we're going to use the following tools and components:
 
@@ -17,7 +17,33 @@ In this project we're going to use the following tools and components:
 * Prometheus
 * Grafana
 
-## How to run the containerized project?
+## What should we monitor?
+
+For this project, I'm considering the four golden signals, as defined at
+Google's SRE book: [link](https://sre.google/sre-book/monitoring-distributed-systems/#xref_monitoring_golden-signals).
+
+> The four golden signals of monitoring are latency, traffic, errors, and
+> saturation. If you can only measure four metrics of your user-facing system,
+> focus on these four. [...] If you measure all four golden signals and page a
+> human when one signal is problematic (or, in the case of saturation, nearly
+> problematic), your service will be at least decently covered by monitoring.
+
+The following table presents how we can get each signal information with this
+current code configuration:
+
+| Signal     | Description                             | How to get               |
+|------------|-----------------------------------------|--------------------------|
+| Latency    | The time it takes to service a request. | `requestDuration`        |
+| Traffic    | HTTP requests per second.               | `requestCounter`         |
+| Errors     | The rate of requests that fail.         | Combination of both      |
+| Saturation | How "full" your service is.             | Other Prometheus metrics |
+
+1. Notice that `requestDuration` and `requestCounter` are the custom middlewares
+   defined at the API.
+
+## How to run?
+
+### How to run the containerized project?
 
 Make sure you have the following tools installed:
 
@@ -27,78 +53,97 @@ Make sure you have the following tools installed:
 Then, you can use the following commands:
 
 ```bash
-# recommended process using `docker compose'
+# Option 1:
+#
 docker compose up -d
 
-# if you don't want to use the `docker compose' command, you can, first
+#
+# ===============================================================
+#
+
+# Option 2:
+#
+# If you don't want to use the `docker compose' command, you can, first
 # build the docker image for the API
 docker build -t fsharp-api:v1 .
 
-# you can run the API in a standalone process, although this is not
-# my recommended process. Use the `docker-compose' command instead.
-docker run -d -e HOST="0.0.0.0" -p 8085:8085 -p 9085:9085 fsharp-api:v1
+# Then, you can run the API in a standalone container
+docker run -d -p 8085:8085 -p 9085:9085 fsharp-api:v1
 ```
 
-When this project is running you can visit `http://localhost:9090` and start
-grabbing the metrics for our project from the Prometheus interface. The
-docker-compose configuration for the Prometheus service was mainly inspired by
+While this project is running, you can visit `http://localhost:9090` and start
+checking the metrics for the API from the Prometheus interface. The
+docker compose configuration for the Prometheus service was mainly inspired by
 [this reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
 
-## How to run the API locally?
+### How to run the API locally?
 
 For further improvements in the API code, I recommend running the project with a
-local .NET SDK service. In the context of the most recent development, I'm using
-the following version:
+local .NET SDK, since it's faster to iterate through the changes.
 
-* `.NET SDK version 9.0.xxx`
+* .NET SDK version: 9.0.xxx
 
 ```bash
-# use this command to check your installed .NET SDK versions
+# Use this command to list .NET SDKs installed
 dotnet --list-sdks
 ```
 
 Next step is to install the required dependencies, using the following commands:
 
 ```bash
-# get inside the API directory
+# 1. Get inside the API directory
 cd fsharp-api/
 
-# restore nuget packages
+# 2. Restore nuget packages
 dotnet restore
 
-# make sure you can build the project
+# 3. Build the project
 dotnet build
 
-# start the server
+# 4. Start the server
 dotnet run
 # watch mode for development
 # dotnet watch run
 ```
 
-## How to test it?
+## How to test it manually?
+
+This API consists in basically 3 endpoints:
+
+- GET `/health`
+- GET `/ping/%s`
+- POST `/api/prediction`
+
+And you can test them manually with the following commands:
 
 ```bash
-# health endpoint
+# 1. Health endpoint
 curl localhost:8085/health
-# result:
-# API instance is healthy!
+# Response:
+# {"message":"API instance is healthy!"}
 
-# trying the POST endpoint
+# =================================
+
+# 2. Ping endpoint
+curl localhost:8085/ping/abc
+# Response:
+# {"message":"Pong from foo!"}
+
+# =================================
+
+# 3. Prediction endpoint
 curl -X POST \
     -H "Accept: application/json" \
     -d '{"id":1, "crimesPerCapta":0.01}' \
     localhost:8085/api/prediction
-# result:
-# Request OK
-# Id: 1
-# CrimesPerCapta: 0.010000
-# Price Prediction: 27.148332
+# Response:
+# {"message":"OK","id":1,"crimesPerCapta":0.01,"pricePrediction":27.148331825982115}
 ```
 
-You can later see the metrics by visiting `http://localhost:8085/metrics` in
+You can later see the metrics by visiting `http://localhost:9085/metrics` in
 your browser.
 
-# Resource allocation
+## Resource allocation
 
 Since this project uses a bunch of other services, I decided to limit the
 resources allocated for them. If you notice that some piece is not working
@@ -108,7 +153,7 @@ If you want to check how much resources your containers are currently consuming,
 you can use the following command in the terminal:
 
 ```bash
-# check the resources usage for the containers
+# Check the resources usage for the containers in real time
 docker stats
 ```
 
