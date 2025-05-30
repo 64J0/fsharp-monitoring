@@ -1,40 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "6.3.6"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "singlestat",
-      "name": "Singlestat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -60,7 +24,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "description": "",
       "fill": 1,
       "fillGradient": 0,
@@ -97,7 +61,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(http_request_duration_seconds_bucket[$interval])) by (le)",
+          "expr": "sum(increase(api_request_duration_seconds_sum[5m])) / sum(increase(api_request_duration_seconds_count[5m]))",
           "format": "heatmap",
           "interval": "",
           "intervalFactor": 1,
@@ -109,7 +73,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "The duration of HTTP requests",
+      "title": "Average HTTP request duration",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -152,7 +116,7 @@
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": null,
       "description": "",
       "fill": 1,
@@ -193,7 +157,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "http_requests_in_progress",
+          "expr": "sum(increase(api_request_count_total[1m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{job}}",
@@ -251,7 +215,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": null,
       "description": "",
       "format": "dateTimeAsIso",
@@ -307,7 +271,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "process_start_time_seconds{instance =~ \"$instances\"} * 1000",
+          "expr": "process_start_time_seconds{job = \"fsharp-api\"} * 1000",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -334,7 +298,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -427,7 +391,7 @@
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "fill": 1,
       "fillGradient": 0,
@@ -476,7 +440,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total known allocated memory",
+      "title": "Total known allocated memory in megabytes",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -519,7 +483,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "description": "",
       "fill": 1,
@@ -612,7 +576,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "description": "",
       "fill": 1,
@@ -708,7 +672,7 @@
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "DS_PROMETHEUS",
       "decimals": 0,
       "fill": 1,
       "fillGradient": 0,
@@ -886,7 +850,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": "DS_PROMETHEUS",
         "definition": "label_values(http_requests_received_total, instance)",
         "hide": 0,
         "includeAll": true,
