@@ -24,7 +24,10 @@ let notFoundHandler =
 
 let private configureLogging (loggingBuilder: ILoggingBuilder) =
     // https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging#logging-providers
-    loggingBuilder.ClearProviders().AddConsole().SetMinimumLevel LogLevel.Debug
+    match Env.MIN_LOG_LEVEL with
+    | "DEBUG" -> LogLevel.Debug
+    | _ -> LogLevel.Information
+    |> loggingBuilder.ClearProviders().AddConsole().SetMinimumLevel
     |> ignore
 
 let private configureServices (services: IServiceCollection) =

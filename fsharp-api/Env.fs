@@ -12,3 +12,7 @@ let HOST =
     |> setEnvVarDefaultValue "http://localhost"
 
 let PORT = Environment.GetEnvironmentVariable "PORT" |> setEnvVarDefaultValue "8085"
+
+let MIN_LOG_LEVEL =
+    Environment.GetEnvironmentVariable "MIN_LOG_LEVEL"
+    |> setEnvVarDefaultValue "DEBUG"
