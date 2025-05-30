@@ -1,5 +1,7 @@
 compose-up:
-	docker-compose up -d
+	docker compose up -d
+compose-down:
+	docker compose down
 
 start-api-container: build-api-image
 	docker run -d -e HOST="0.0.0.0" -p 8085:8085 -p 9085:9085 fsharp-api:v1
