@@ -1,11 +1,8 @@
 ﻿open System.Net
-open System.IO.Compression
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
-open Microsoft.AspNetCore.Antiforgery
-open Microsoft.AspNetCore.ResponseCompression
 
 open Giraffe
 open Giraffe.EndpointRouting
@@ -32,28 +29,13 @@ let private configureLogging (loggingBuilder: ILoggingBuilder) =
 
 let private configureServices (services: IServiceCollection) =
     services
-        .AddAntiforgery() // https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery#antiforgery-with-minimal-apis
-        .AddResponseCompression(fun (options: ResponseCompressionOptions) ->
-            // https://learn.microsoft.com/en-us/aspnet/core/performance/response-compression
-            options.EnableForHttps <- true
-            options.Providers.Add<BrotliCompressionProvider>()
-            options.Providers.Add<GzipCompressionProvider>())
-        .Configure<BrotliCompressionProviderOptions>(fun (options: BrotliCompressionProviderOptions) ->
-            options.Level <- CompressionLevel.Fastest)
-        .Configure<GzipCompressionProviderOptions>(fun (options: GzipCompressionProviderOptions) ->
-            options.Level <- CompressionLevel.SmallestSize)
         .AddMetricServer(fun (options: KestrelMetricServerOptions) -> options.Port <- PROMETHEUS_PORT)
         .AddRouting()
         .AddGiraffe()
     |> ignore
 
 let private configureApp (appBuilder: IApplicationBuilder) =
-    appBuilder
-        .UseAntiforgery()
-        .UseResponseCompression()
-        .UseRouting()
-        .UseEndpoints(_.MapGiraffeEndpoints(appRouter))
-        .UseGiraffe(notFoundHandler)
+    appBuilder.UseRouting().UseEndpoints(_.MapGiraffeEndpoints(appRouter)).UseGiraffe(notFoundHandler)
 
 [<EntryPoint>]
 let main (args: string[]) =
