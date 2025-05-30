@@ -10,8 +10,9 @@ services:
           cpus: "0.25"
           memory: "256M"
     environment:
-      - HOST=0.0.0.0
+      - HOST=http://0.0.0.0
       - PORT=8085
+      - MIN_LOG_LEVEL=INFO
     ports:
       - "8085:8085"
       - "9085:9085"
