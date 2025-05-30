@@ -125,7 +125,7 @@ curl localhost:8085/health
 # =================================
 
 # 2. Ping endpoint
-curl localhost:8085/ping/abc
+curl localhost:8085/ping/foo
 # Response:
 # {"message":"Pong from foo!"}
 
