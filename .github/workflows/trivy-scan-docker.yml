@@ -1,0 +1,40 @@
+name: 'Automated tests'
+
+on:
+  workflow_dispatch:
+  push:
+    # will work on pushes to the main branch that also
+    # modify the Dockerfile or docker-compose.yml
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - docker-compose.yml
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Build an image from Dockerfile
+        run: docker build -t fsharp-api:latest .
+      - name: Run Trivy vulnerability scanner
+        id: trivy-scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: fsharp-api:latest
+          format: 'table'
+          output: 'trivy-results.table'
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          timeout: "15m"
+      - name: Get Trivy scan summary
+        if: ${{ steps.trivy-scan.outcome == 'success' }}
+        continue-on-error: true
+        run: |
+          echo "## Trivy results" >> $GITHUB_STEP_SUMMARY
+          echo "---"              >> $GITHUB_STEP_SUMMARY
+          cat trivy-results.table >> $GITHUB_STEP_SUMMARY
