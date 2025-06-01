@@ -20,24 +20,6 @@ jobs:
       - name: Build an image from Dockerfile
         run: docker build -t fsharp-api:latest .
 
-      - name: Run Trivy vulnerability scanner - sarif
-        id: trivy-scan-sarif
-        continue-on-error: true
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: fsharp-api:latest
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          ignore-unfixed: true
-          vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
-          timeout: "15m"
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: ${{ steps.trivy-scan-sarif.outcome == 'success' }}
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
-
       - name: Run Trivy vulnerability scanner - template
         id: trivy-scan-template
         continue-on-error: true
@@ -58,3 +40,21 @@ jobs:
           echo "## Trivy results" >> $GITHUB_STEP_SUMMARY
           echo "---"              >> $GITHUB_STEP_SUMMARY
           cat trivy-results.html  >> $GITHUB_STEP_SUMMARY
+
+      - name: Run Trivy vulnerability scanner - sarif
+        id: trivy-scan-sarif
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: fsharp-api:latest
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          timeout: "15m"
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: ${{ steps.trivy-scan-sarif.outcome == 'success' }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
