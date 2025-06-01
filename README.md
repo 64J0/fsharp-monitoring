@@ -175,7 +175,7 @@ can trigger it using:
 make load-test
 ```
 
-For an example report check [this report](./reports/2025-06-01_22.35.12_session_d631a701/nbomber_report_2025-06-01--22-39-02.md).
+For an example report check [this file](./reports/2025-06-01_22.35.12_session_d631a701/nbomber_report_2025-06-01--22-39-02.md).
 
 If you want to check how the system resources are being used, go for the next
 section on resource allocation.
