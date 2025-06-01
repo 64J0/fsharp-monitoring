@@ -1,3 +1,5 @@
+.PHONY: load-test
+
 compose-up:
 	docker compose up -d --build
 compose-down:
@@ -22,3 +24,7 @@ request-broken-prediction:
     		-H "Accept: application/json" \
     		-d '{"id":"1", "crimesPerCapta":0.01}' \
     		localhost:8085/api/prediction
+
+# use this command after running `make compose-up`
+load-test:
+	dotnet run --project ./load-test/load-test.fsproj

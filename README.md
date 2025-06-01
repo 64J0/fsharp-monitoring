@@ -167,7 +167,18 @@ your browser.
 
 ## Load test
 
-TODO https://nbomber.com/docs/getting-started/overview/
+To check how the API behaves under a stress scenario, I added this simple load
+test based on [NBomber](https://nbomber.com/docs/getting-started/overview/). One
+can trigger it using:
+
+```bash
+make load-test
+```
+
+For an example report check [this report][./reports/2025-06-01_22.35.12_session_d631a701/nbomber_report_2025-06-01--22-39-02.md].
+
+If you want to check how the system resources are being used, go for the next
+section on resource allocation.
 
 ## Resource allocation
 

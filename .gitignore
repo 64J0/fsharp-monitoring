@@ -2,3 +2,7 @@ obj/
 bin/
 paket-files/
 .fake
+
+# ignore load test reports
+reports/*/*
+!reports/2025-06-01_22.35.12_session_d631a701/nbomber_report_2025-06-01--22-39-02.md

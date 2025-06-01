@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsharpAPI", "fsharp-api\FsharpAPI.fsproj", "{A781C66F-34E5-4318-B8C7-571A7A50C937}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "load-test", "load-test\load-test.fsproj", "{0FD2AB41-BF49-4D44-A4D3-75DC9F4C222D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{A781C66F-34E5-4318-B8C7-571A7A50C937}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A781C66F-34E5-4318-B8C7-571A7A50C937}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A781C66F-34E5-4318-B8C7-571A7A50C937}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD2AB41-BF49-4D44-A4D3-75DC9F4C222D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD2AB41-BF49-4D44-A4D3-75DC9F4C222D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD2AB41-BF49-4D44-A4D3-75DC9F4C222D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD2AB41-BF49-4D44-A4D3-75DC9F4C222D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
