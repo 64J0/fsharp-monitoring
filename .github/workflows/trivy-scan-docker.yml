@@ -11,6 +11,10 @@ on:
       - Dockerfile
       - docker-compose.yml
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   trivy-scan:
     runs-on: ubuntu-24.04
