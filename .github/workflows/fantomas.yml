@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'Fsharp-API/**'
+      - 'fsharp-api/**'
+      - 'load-test/**'
+      - 'utils/**'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -30,9 +32,13 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Tool Restore
-        working-directory: fsharp-api
         run: dotnet tool restore
 
-      - name: Lint
-        working-directory: fsharp-api
-        run: dotnet fantomas -r --check .
+      - name: Check lint for fsharp-api
+        run: dotnet fantomas -r --check ./fsharp-api/
+
+      - name: Check lint for load-test
+        run: dotnet fantomas -r --check ./load-test/
+
+      - name: Check lint for utils
+        run: dotnet fantomas -r --check ./utils/
