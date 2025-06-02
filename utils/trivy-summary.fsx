@@ -208,8 +208,8 @@ TrivyReport.Parse(trivyResult).Results
               Severity = vuln.Severity
               Package = vuln.PkgName
               Target = result.Target
-              InstalledVersion = string vuln.InstalledVersion
-              FixedVersion = string vuln.FixedVersion }
+              InstalledVersion = vuln.InstalledVersion
+              FixedVersion = vuln.FixedVersion }
         )))
 
 module Summary =
@@ -240,9 +240,6 @@ Quantity of vulnerabilities found by severity:
 
 module TableInfo =
 
-    let private groupVulnerabilityByTarget (vulnerabilitiesSeq: Vulnerability seq) =
-        vulnerabilitiesSeq |> Seq.groupBy (fun v -> v.Target)
-
     let private headerTarget (target: string) =
         $"<h3>Target: <code>{target}</code></h3>"
 
@@ -255,20 +252,17 @@ module TableInfo =
         $"| {vuln.Package} | {vuln.VulnerabilityID} | {vuln.Severity} | {vuln.InstalledVersion} | {vuln.FixedVersion} |"
 
     let main () =
-        let vulnByPackage = groupVulnerabilityByTarget vulnerabilities
+        vulnerabilities
+        |> Seq.groupBy _.Target
+        |> Seq.fold
+            (fun acc (t, vSeq) ->
+                let header = headerTarget t
 
-        let configuredTable =
-            vulnByPackage
-            |> Seq.fold
-                (fun acc (t, vSeq) ->
-                    let header = headerTarget t
+                let rows = vSeq |> Seq.fold (fun acc v -> $"{acc}{(tableRow v)}\n") ""
 
-                    let rows = vSeq |> Seq.fold (fun acc v -> acc + (tableRow v) + "\n") ""
-
-                    acc + header + "\n" + tableHeader + "\n" + rows + "\n")
-                ""
-
-        printfn "%s" configuredTable
+                $"{acc}{header}\n{tableHeader}\n{rows}\n")
+            ""
+        |> printfn "%s"
 
 Summary.main ()
 TableInfo.main ()
