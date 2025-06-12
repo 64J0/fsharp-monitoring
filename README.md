@@ -31,15 +31,25 @@ Google's SRE book: [link](https://sre.google/sre-book/monitoring-distributed-sys
 The following table presents how we can get each signal information with this
 current code configuration:
 
-| Signal     | Description                             | How to get               |
-|------------|-----------------------------------------|--------------------------|
-| Latency    | The time it takes to service a request. | `requestDuration`        |
-| Traffic    | HTTP requests per second.               | `requestCounter`         |
-| Errors     | The rate of requests that fail.         | Combination of both      |
-| Saturation | How "full" your service is.             | Other Prometheus metrics |
+| Signal     | Description                                            | How to get               |
+|------------|--------------------------------------------------------|--------------------------|
+| Latency    | The time it takes to service a request (service time). | `requestDuration`1,2     |
+| Traffic    | HTTP requests per second.                              | `requestCounter`1        |
+| Errors     | The rate of requests that fail.                        | Combination of both      |
+| Saturation | How "full" your service is.                            | Other Prometheus metrics |
 
 1. Notice that `requestDuration` and `requestCounter` are the custom middlewares
    defined at the API.
+2. Even though the Google SRE book uses the latency for the signal, I decided to
+   use the response time. Check the following definition to better understand
+   this difference:
+   
+   > [...] The response time is what the client sees: besides the actual time to
+   > process the request (the service time), it includes network delays and
+   > queueing delays. Latency is the duration that a request is waiting to be
+   > handled - during which it is latent, awaiting service.
+   > 
+   > --- Designing Data-Intensive Applications.
 
 ## How to run?
 
