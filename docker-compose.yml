@@ -85,6 +85,18 @@ services:
       - "9090:9090"
     restart: always
 
+  adminer:
+    image: adminer:4-standalone
+    container_name: stocks-adminer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - monitoring-network
+    ports:
+      - "8080:8080"
+    restart: always
+
   grafana:
     image: grafana/grafana:12.0.1-ubuntu
     container_name: grafana

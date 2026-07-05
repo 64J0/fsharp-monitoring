@@ -16,4 +16,8 @@
     <PackageReference Include="NBomber.Http" Version="6.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../fsharp-api/FsharpAPI.fsproj" />
+  </ItemGroup>
+
 </Project>

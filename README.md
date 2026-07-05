@@ -178,6 +178,22 @@ Sample dashboard:
 
 ![Dashboard sample](./assets/sample-dashboard.png "Sample Grafana dashboard")
 
+#### Adminer (database UI)
+
+Adminer is available at `http://localhost:8080` for browsing and querying the database directly.
+
+Login credentials:
+
+| Field | Value |
+|---|---|
+| System | PostgreSQL |
+| Server | `postgres` |
+| Username | `stocks_user` |
+| Password | `stocks_pass` |
+| Database | `stocks_db` |
+
+> **Note:** use `postgres` as the server (the Docker service name), not `localhost`.
+
 ### Local development
 
 Requires .NET SDK 10.0.
