@@ -1,17 +1,12 @@
 name: 'Automated tests'
 
 on:
-  push:
-    paths:
-      - 'fsharp-domain/**'
-      - 'fsharp-application/**'
-      - 'tests/**'
+  workflow_dispatch:
   pull_request:
     paths:
       - 'fsharp-domain/**'
       - 'fsharp-application/**'
       - 'tests/**'
-  workflow_dispatch:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true

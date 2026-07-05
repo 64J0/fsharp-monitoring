@@ -10,10 +10,6 @@ COPY fsharp-application/*.fsproj     ./fsharp-application/
 COPY fsharp-infrastructure/*.fsproj  ./fsharp-infrastructure/
 COPY fsharp-api/*.fsproj             ./fsharp-api/
 COPY db-migrations/*.fsproj          ./db-migrations/
-COPY load-test/*.fsproj              ./load-test/
-
-RUN dotnet restore fsharp-api/FsharpAPI.fsproj
-RUN dotnet restore db-migrations/FsharpAPI.Migrations.fsproj
 
 # Copy all source code
 COPY fsharp-domain/          ./fsharp-domain/
@@ -22,8 +18,8 @@ COPY fsharp-infrastructure/  ./fsharp-infrastructure/
 COPY fsharp-api/             ./fsharp-api/
 COPY db-migrations/          ./db-migrations/
 
-RUN dotnet publish fsharp-api/FsharpAPI.fsproj -c Release -o ./out/api --no-restore
-RUN dotnet publish db-migrations/FsharpAPI.Migrations.fsproj -c Release -o ./out/migrations --no-restore
+RUN dotnet publish fsharp-api/FsharpAPI.fsproj -c Release -o ./out/api
+RUN dotnet publish db-migrations/FsharpAPI.Migrations.fsproj -c Release -o ./out/migrations
 
 # ── Migrations stage ─────────────────────────────────────────────────────────
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS migrations

@@ -9,7 +9,7 @@
       ],
       "rollForward": false
     },
-    "sqlhydra": {
+    "sqlhydra.cli": {
       "version": "4.0.1",
       "commands": [
         "sqlhydra"
