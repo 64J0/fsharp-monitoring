@@ -1,25 +1,47 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
-# copy main project
-COPY fsharp-api/ .
+# Copy solution file
+COPY fsharp-monitoring.slnx .
 
-RUN dotnet publish -c Release -o ./bin
+# Copy project files first for layer-cached restore
+COPY fsharp-domain/*.fsproj          ./fsharp-domain/
+COPY fsharp-application/*.fsproj     ./fsharp-application/
+COPY fsharp-infrastructure/*.fsproj  ./fsharp-infrastructure/
+COPY fsharp-api/*.fsproj             ./fsharp-api/
+COPY db-migrations/*.fsproj          ./db-migrations/
 
-# final stage/image
-FROM mcr.microsoft.com/dotnet/nightly/aspnet:9.0-noble-chiseled AS runtime
+# Copy all source code
+COPY fsharp-domain/          ./fsharp-domain/
+COPY fsharp-application/     ./fsharp-application/
+COPY fsharp-infrastructure/  ./fsharp-infrastructure/
+COPY fsharp-api/             ./fsharp-api/
+COPY db-migrations/          ./db-migrations/
+
+RUN dotnet publish fsharp-api/FsharpAPI.fsproj -c Release -o ./out/api
+RUN dotnet publish db-migrations/FsharpAPI.Migrations.fsproj -c Release -o ./out/migrations
+
+# ── Migrations stage ─────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS migrations
 
 LABEL org.opencontainers.image.source=https://github.com/64J0/fsharp-monitoring
 
 WORKDIR /app
+COPY --from=build /app/out/migrations .
 
-COPY --from=build /app/bin .
+ENTRYPOINT ["/app/FsharpAPI.Migrations"]
 
-# normal server
+# ── API runtime stage ─────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS runtime
+
+LABEL org.opencontainers.image.source=https://github.com/64J0/fsharp-monitoring
+
+WORKDIR /app
+COPY --from=build /app/out/api .
+
+# HTTP API port
 EXPOSE 8085
-
-# Prometheus metrics server
-# must not be exposed publicly
+# Prometheus metrics port (do not expose publicly)
 EXPOSE 9085
 
 ENTRYPOINT ["/app/FsharpAPI"]

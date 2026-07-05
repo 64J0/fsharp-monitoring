@@ -12,20 +12,17 @@ let pingReq () =
     |> Request.sendAsync
     |> Async.Ignore
 
-let predictionReq () =
+let tradeReq () =
     http {
-        POST "http://localhost:8085/api/prediction"
+        POST "http://localhost:8085/api/trades"
         body
-        jsonSerialize {| id = 1; crimesPerCapta = 0.01 |}
-    }
-    |> Request.sendAsync
-    |> Async.Ignore
 
-let predictionFailReq () =
-    http {
-        POST "http://localhost:8085/api/prediction"
-        body
-        jsonSerialize {| id = "1"; crimesPerCapta = 0.01 |}
+        jsonSerialize
+            {| stockId = 1
+               side = "BUY"
+               quantity = 10
+               price = 175.50
+               executedAt = "2026-07-02T12:00:00Z" |}
     }
     |> Request.sendAsync
     |> Async.Ignore
@@ -36,8 +33,7 @@ let predictionFailReq () =
     match n with
     | i when i < 25 -> healthReq ()
     | i when i < 50 -> pingReq ()
-    | i when i < 75 -> predictionReq ()
-    | _ -> predictionFailReq ())
+    | _ -> tradeReq ())
 |> Array.randomShuffle
 |> Async.Parallel
 |> Async.RunSynchronously

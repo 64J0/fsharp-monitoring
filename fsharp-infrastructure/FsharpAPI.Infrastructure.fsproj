@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>FsharpAPI.Infrastructure</AssemblyName>
+    <RootNamespace>FsharpAPI.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- SqlHydra generated types must be compiled first -->
+    <Compile Include="Generated/StocksDb.fs" />
+    <!-- Mappers transform database rows into domain entities (anti-corruption layer) -->
+    <Compile Include="Mappers/StockMapper.fs" />
+    <Compile Include="Mappers/QuoteMapper.fs" />
+    <Compile Include="Mappers/TradeMapper.fs" />
+    <!-- Repository adapters implement the application port interfaces -->
+    <Compile Include="Repositories/StockRepository.fs" />
+    <Compile Include="Repositories/QuoteRepository.fs" />
+    <Compile Include="Repositories/TradeRepository.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="10.1.301" />
+    <PackageReference Include="SqlHydra.Query" Version="4.0.4" />
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../fsharp-domain/FsharpAPI.Domain.fsproj" />
+    <ProjectReference Include="../fsharp-application/FsharpAPI.Application.fsproj" />
+  </ItemGroup>
+</Project>
