@@ -16,3 +16,7 @@ let PORT = Environment.GetEnvironmentVariable "PORT" |> setEnvVarDefaultValue "8
 let MIN_LOG_LEVEL =
     Environment.GetEnvironmentVariable "MIN_LOG_LEVEL"
     |> setEnvVarDefaultValue "DEBUG"
+
+let DB_CONNECTION_STRING =
+    Environment.GetEnvironmentVariable "DB_CONNECTION_STRING"
+    |> setEnvVarDefaultValue "Host=localhost;Database=stocks_db;Username=stocks_user;Password=stocks_pass;Port=5432"

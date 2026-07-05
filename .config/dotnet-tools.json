@@ -3,9 +3,16 @@
   "isRoot": true,
   "tools": {
     "fantomas": {
-      "version": "7.0.2",
+      "version": "7.0.5",
       "commands": [
         "fantomas"
+      ],
+      "rollForward": false
+    },
+    "sqlhydra": {
+      "version": "4.0.1",
+      "commands": [
+        "sqlhydra"
       ],
       "rollForward": false
     }

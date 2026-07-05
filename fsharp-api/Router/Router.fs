@@ -15,5 +15,8 @@ let appRouter: Endpoint list =
                 requestCounter
                 >=> requestDuration
                 >=> (int HttpStatusCode.OK |> setStatusCode)
-                >=> json {| Message = $"Pong from {name}!" |}) ]
-      POST [ route "/api/prediction" (requestCounter >=> requestDuration >=> Prediction.createController ()) ] ]
+                >=> json {| Message = $"Pong from {name}!" |})
+            route "/api/stocks" (requestCounter >=> requestDuration >=> Stock.listController ())
+            routef "/api/stocks/%s" (fun ticker ->
+                requestCounter >=> requestDuration >=> Stock.getByTickerController ticker) ]
+      POST [ route "/api/trades" (requestCounter >=> requestDuration >=> Trade.createController ()) ] ]

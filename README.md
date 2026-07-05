@@ -1,209 +1,273 @@
 # Monitoring F# API
 
-This project consists in a F# REST API to exemplify how to work with Prometheus,
-Grafana, AlertManager, and other monitoring and alerting tools. To make the
-connection between this .NET project and the Prometheus server, we're using the
-[prometheus-net](https://github.com/prometheus-net/prometheus-net) package.
+An F# REST API demonstrating production-grade monitoring with Prometheus, Grafana, and AlertManager. Built with ASP.NET + Giraffe following **clean architecture** principles.
 
-+ Related project :: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics).
+* Related project: [64J0/dotnet-builtin-metrics](https://github.com/64J0/dotnet-builtin-metrics)
 
-### Project components
+---
 
-In this project we're going to use the following tools and components:
+## Clean Architecture
 
-* FSharp API
-  * Using ASP.NET and Giraffe
-  * prometheus-net
-* Prometheus
-* Grafana
+Clean architecture organises code into concentric layers where **dependencies only point inward** — outer layers depend on inner ones, never the reverse. This is enforced through *ports* (interfaces) defined by inner layers and implemented by outer ones.
+
+### Layers
+
+| Layer | Project | Responsibility |
+|---|---|---|
+| **Domain** | `fsharp-domain` | Entities, value objects, and domain errors. Zero external dependencies. |
+| **Application** | `fsharp-application` | Use-case orchestration and port interfaces. Depends only on Domain. |
+| **Infrastructure** | `fsharp-infrastructure` | Database access via SqlHydra-generated types and repository implementations. |
+| **Presentation** | `fsharp-api` | HTTP controllers, routing, Prometheus middleware, and DI composition root. |
+
+### Advantages
+
+* **Testability** — domain and application logic can be unit-tested without a database or HTTP stack.
+* **Framework independence** — business rules do not depend on Giraffe, ASP.NET, or any ORM.
+* **Explicit boundaries** — ports make all cross-layer dependencies visible and substitutable.
+* **Separation of concerns** — each layer has a single, well-defined responsibility.
+
+### Disadvantages
+
+* **More boilerplate** — mapping between HTTP DTOs, domain models, and database records adds ceremony.
+* **Indirection** — tracing a request across many layers can be harder for newcomers.
+* **Overhead for small projects** — the layered structure can feel heavy for simple CRUD applications.
+
+---
+
+## Project Structure
+
+```mermaid
+graph TD
+    subgraph Observability
+        Prometheus
+        Grafana
+        AlertManager
+    end
+
+    subgraph ".NET Solution"
+        subgraph "Presentation — fsharp-api"
+            Router["Router\n/health · /ping · /api/stocks · /api/trades"]
+            Controllers["Controllers\nHealth · Stock · Trade"]
+            PMiddleware["Prometheus Middleware\nrequestCounter · requestDuration"]
+        end
+
+        subgraph "Application — fsharp-application"
+            UseCases["Use Cases\nListStocks · GetStockByTicker\nRecordTrade · GetLatestQuote"]
+            Ports["Ports (Interfaces)\nIStockRepository\nIQuoteRepository\nITradeRepository"]
+        end
+
+        subgraph "Domain — fsharp-domain"
+            Entities["Entities\nStock · Trade · Quote"]
+            ValueObjects["Value Objects\nTicker · Money"]
+            DomainErrors["Errors\nDomainError"]
+        end
+
+        subgraph "Infrastructure — fsharp-infrastructure"
+            Repositories["Repositories\nStockRepository · QuoteRepository\nTradeRepository"]
+            SqlHydra["Generated — SqlHydra\nStocksDb.fs"]
+        end
+
+        subgraph "Migrations — db-migrations"
+            Migrations["SQL\n001_InitialSchema · 002_AddIndexes"]
+        end
+    end
+
+    subgraph "Supporting"
+        Tests["tests/\nxUnit.v3 · FsCheck property tests"]
+        LoadTest["load-test/\nNBomber stress test"]
+        Utils["utils/\nscripts: make-requests · trivy-summary · gen-pass"]
+    end
+
+    Router --> Controllers
+    Controllers --> UseCases
+    UseCases --> Ports
+    UseCases --> Entities
+    Repositories -->|implements| Ports
+    Repositories --> SqlHydra
+    SqlHydra --> DB[(PostgreSQL)]
+    Migrations --> DB
+
+    PMiddleware --> Prometheus
+    Prometheus --> Grafana
+    Prometheus --> AlertManager
+```
+
+### Directory reference
+
+| Path | Purpose |
+|---|---|
+| `fsharp-domain/` | Core business model — entities, value objects, error union |
+| `fsharp-application/` | Use cases and port interfaces (no I/O) |
+| `fsharp-infrastructure/` | Npgsql + SqlHydra repositories, generated DB types |
+| `fsharp-api/` | ASP.NET / Giraffe entry point, controllers, router, middleware |
+| `db-migrations/` | DbUp SQL migration runner |
+| `tests/` | Unit and property-based tests |
+| `load-test/` | NBomber HTTP load test |
+| `prometheus/` | Prometheus config, alerting rules, TLS web config |
+| `grafana/` | Provisioned datasources and dashboards |
+| `utils/` | Helper scripts (`make-requests.fsx`, `trivy-summary.fsx`, `gen-pass.fsx`) |
+
+---
 
 ## What should we monitor?
 
-For this project, I'm considering the four golden signals, as defined at
-Google's SRE book: [link](https://sre.google/sre-book/monitoring-distributed-systems/#xref_monitoring_golden-signals).
+We follow Google's **four golden signals** from the [SRE book](https://sre.google/sre-book/monitoring-distributed-systems/#xref_monitoring_golden-signals):
 
 > The four golden signals of monitoring are latency, traffic, errors, and
 > saturation. If you can only measure four metrics of your user-facing system,
-> focus on these four. [...] If you measure all four golden signals and page a
-> human when one signal is problematic (or, in the case of saturation, nearly
-> problematic), your service will be at least decently covered by monitoring.
+> focus on these four.
 
-The following table presents how we can get each signal information with this
-current code configuration:
+| Signal | Description | How to get |
+|---|---|---|
+| Latency | Time to service a request. | `requestDuration` custom middleware |
+| Traffic | HTTP requests per second. | `requestCounter` custom middleware |
+| Errors | Rate of failed requests. | Combination of both metrics |
+| Saturation | How "full" the service is. | Built-in Prometheus / .NET metrics |
 
-| Signal     | Description                                            | How to get               |
-|------------|--------------------------------------------------------|--------------------------|
-| Latency    | The time it takes to service a request (service time). | `requestDuration`1,2     |
-| Traffic    | HTTP requests per second.                              | `requestCounter`1        |
-| Errors     | The rate of requests that fail.                        | Combination of both      |
-| Saturation | How "full" your service is.                            | Other Prometheus metrics |
+> **Note:** `requestDuration` measures *response time* (client-perceived), not pure service latency — it includes network and queueing delays (see *Designing Data-Intensive Applications*).
 
-1. Notice that `requestDuration` and `requestCounter` are the custom middlewares
-   defined at the API.
-2. Even though the Google SRE book uses the latency for the signal, I decided to
-   use the response time. Check the following definition to better understand
-   this difference:
-   
-   > [...] The response time is what the client sees: besides the actual time to
-   > process the request (the service time), it includes network delays and
-   > queueing delays. Latency is the duration that a request is waiting to be
-   > handled - during which it is latent, awaiting service.
-   > 
-   > --- Designing Data-Intensive Applications.
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Liveness check |
+| `GET` | `/ping/:name` | Echo ping |
+| `GET` | `/api/stocks` | List all stocks |
+| `GET` | `/api/stocks/:ticker` | Get stock by ticker symbol |
+| `POST` | `/api/trades` | Record a trade execution |
+| `GET` | `/openapi/v1.json` | OpenAPI document |
+| `GET` | `/scalar/v1` | Scalar interactive API UI |
+| `GET` | `:9085/metrics` | Prometheus metrics scrape endpoint |
+
+---
 
 ## How to run?
 
-### How to run the containerized project?
+### Containerised (recommended)
 
-Make sure you have the following tools installed:
+Make sure you have:
 
 * `Docker version 28.1.1`
 * `Docker Compose version v2.35.1`
 
-Then, you can use the following commands:
-
 ```bash
-# Option 1:
-#
+# Start all services (API, PostgreSQL, Prometheus, Grafana)
 docker compose up -d
 
-#
-# ===============================================================
-#
-
-# Option 2:
-#
-# If you don't want to use the `docker compose' command, you can, first
-# build the docker image for the API
+# Or build the API image and run standalone
 docker build -t fsharp-api:v1 .
-
-# Then, you can run the API in a standalone container
 docker run -d -p 8085:8085 -p 9085:9085 fsharp-api:v1
 ```
 
-While this project is running, you can visit `http://localhost:9090` and start
-checking the metrics for the API from the Prometheus interface. The
-docker compose configuration for the Prometheus service was mainly inspired by
-[this reference](https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml).
+Prometheus is available at `http://localhost:9090`.
 
-+ Notice that the API base image is a chiseled variant. If you're not aware of
-  what this means, I highly recommend taking a look at this article from
-  Microsoft's DevBlogs: [link](https://devblogs.microsoft.com/dotnet/announcing-dotnet-chiseled-containers/).
+* The API base image uses a chiseled variant. See [this article](https://devblogs.microsoft.com/dotnet/announcing-dotnet-chiseled-containers/) for more details.
 
-#### Dashboards
+#### Grafana dashboards
 
-When the Grafana container starts, it's configured to automatically connect to
-the Prometheus data source and load two dashboards. You can access the Grafana
-platform through the `http://localhost:300` address.
+Grafana auto-provisions two dashboards on startup. Access it at `http://localhost:3000`.
 
-The first time you log in you can use the "default" credentials:
+Default credentials:
 
-- Username :: admin
-- Password :: admin
+* Username: `admin`
+* Password: `admin`
 
-Notice that the UI will ask you to change the password, but you can just skip
-this for now.
-
-Sample:
+Sample dashboard:
 
 ![Dashboard sample](./assets/sample-dashboard.png "Sample Grafana dashboard")
 
-### How to run the API locally?
+### Local development
 
-For further improvements in the API code, I recommend running the project with a
-local .NET SDK, since it's faster to iterate through the changes.
-
-* .NET SDK version: 9.0.xxx
+Requires .NET SDK 10.0.
 
 ```bash
-# Use this command to list .NET SDKs installed
-dotnet --list-sdks
-```
-
-Next step is to install the required dependencies, using the following commands:
-
-```bash
-# 1. Get inside the API directory
 cd fsharp-api/
-
-# 2. Restore nuget packages
 dotnet restore
-
-# 3. Build the project
 dotnet build
-
-# 4. Start the server
 dotnet run
-# watch mode for development
-# dotnet watch run
+# or: dotnet watch run
 ```
 
-## How to test it manually?
+---
 
-This API consists in basically 3 endpoints:
-
-- GET `/health`
-- GET `/ping/%s`
-- POST `/api/prediction`
-
-And you can test them manually with the following commands:
+## How to test manually?
 
 ```bash
-# 1. Health endpoint
+# Health check
 curl localhost:8085/health
-# Response:
 # {"message":"API instance is healthy!"}
 
-# =================================
-
-# 2. Ping endpoint
+# Ping
 curl localhost:8085/ping/foo
-# Response:
 # {"message":"Pong from foo!"}
 
-# =================================
+# List stocks
+curl localhost:8085/api/stocks
 
-# 3. Prediction endpoint
+# Get stock by ticker
+curl localhost:8085/api/stocks/AAPL
+
+# Record a trade
 curl -X POST \
-    -H "Accept: application/json" \
-    -d '{"id":1, "crimesPerCapta":0.01}' \
-    localhost:8085/api/prediction
-# Response:
-# {"message":"OK","id":1,"crimesPerCapta":0.01,"pricePrediction":27.148331825982115}
+    -H "Content-Type: application/json" \
+    -d '{"stockId":1,"side":"BUY","quantity":10,"price":175.50,"executedAt":"2026-07-02T12:00:00Z"}' \
+    localhost:8085/api/trades
+
+# OpenAPI document
+curl localhost:8085/openapi/v1.json
+
+# Scalar interactive UI (open in a browser)
+# http://localhost:8085/scalar/v1
+
+# Prometheus metrics
+curl localhost:9085/metrics
 ```
 
-You can later see the metrics by visiting `http://localhost:9085/metrics` in
-your browser.
+You can also use the `make` shortcuts:
+
+```bash
+make request-health
+make request-ping
+make request-stocks
+make request-stock-ticker
+make request-trade
+```
+
+Or send all requests in parallel with the helper script:
+
+```bash
+dotnet fsi utils/make-requests.fsx
+```
+
+---
 
 ## Load test
 
-To check how the API behaves under a stress scenario, I added this simple load
-test based on [NBomber](https://nbomber.com/docs/getting-started/overview/). One
-can trigger it using:
+The load test uses [NBomber](https://nbomber.com/docs/getting-started/overview/) and runs a ramping injection scenario against the API.
 
 ```bash
 make load-test
 ```
 
-For an example report check [this file](./reports/2025-06-01_22.35.12_session_d631a701/nbomber_report_2025-06-01--22-39-02.md).
-
-If you want to check how the system resources are being used, go for the next
-section on resource allocation.
+---
 
 ## Resource allocation
 
-Since this project uses a bunch of other services, I decided to limit the
-resources allocated for them. If you notice that some piece is not working
-properly, make sure to test other values for those resources (CPU and Memory).
-
-If you want to check how much resources your containers are currently consuming,
-you can use the following command in the terminal:
+All services in `docker-compose.yml` have CPU and memory limits. To monitor live resource usage:
 
 ```bash
-# Check the resources usage for the containers in real time
 docker stats
 ```
 
 Example:
 
-![Example of container stats](./assets/container-stats.jpg "Image showing the resources stats of several containers running")
+![Container stats](./assets/container-stats.jpg "Resources stats for running containers")
+
+---
+
+## Changelog
+
+* **June 2025** — Version 1 released.
+* **July 2026** — Major AI-assisted refactoring: clean architecture, SqlHydra, Giraffe.OpenApi, Scalar, xUnit.v3, FsCheck property-based tests.

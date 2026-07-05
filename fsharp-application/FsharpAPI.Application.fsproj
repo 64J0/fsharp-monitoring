@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>FsharpAPI.Application</AssemblyName>
+    <RootNamespace>FsharpAPI.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Ports/IStockRepository.fs" />
+    <Compile Include="Ports/IQuoteRepository.fs" />
+    <Compile Include="Ports/ITradeRepository.fs" />
+    <Compile Include="UseCases/GetStockByTicker.fs" />
+    <Compile Include="UseCases/ListStocks.fs" />
+    <Compile Include="UseCases/RecordTrade.fs" />
+    <Compile Include="UseCases/GetLatestQuote.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../fsharp-domain/FsharpAPI.Domain.fsproj" />
+  </ItemGroup>
+</Project>

@@ -16,7 +16,9 @@ module SimpleHttp =
                 fun context ->
                     task {
                         let request =
-                            Http.createRequest "GET" $"http://localhost:8085/ping/foo-{System.DateTime.UtcNow.Millisecond}"
+                            Http.createRequest
+                                "GET"
+                                $"http://localhost:8085/ping/foo-{System.DateTime.UtcNow.Millisecond}"
                             |> Http.withHeader "Accept" "application/json"
 
                         let! response = Http.send httpClient request
@@ -36,11 +38,20 @@ module SimpleHttp =
               new HttpMetricsPlugin(seq { HttpVersion.Version1 }) ]
         |> NBomberRunner.run
 
+type ReturnCode =
+    | Success
+    | Failure
+
+    member this.ToInt() =
+        match this with
+        | Success -> 0
+        | Failure -> 1
+
 [<EntryPoint>]
-let main (args: string array) =
+let main (_args: string array) =
     try
-        SimpleHttp.run () |> ignore
-        0 // Exit code 0 indicates success
+        let _ = SimpleHttp.run ()
+        ReturnCode.Success.ToInt()
     with ex ->
-        printfn "An error occurred: %s" ex.Message
-        1 // Exit code 1 indicates failure
+        printfn "An error occurred when running the load test: %s" ex.Message
+        ReturnCode.Failure.ToInt()

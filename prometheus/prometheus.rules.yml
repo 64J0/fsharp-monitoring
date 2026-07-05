@@ -21,11 +21,6 @@ groups:
   - record: job_instance_mode:container_cpu_usage_seconds_total:avg_rate5m
     expr: avg by (job, instance, mode) (rate(container_cpu_usage_seconds_total[5m]))
 
-- name: "post-prediction-endpoint-rate"
-  rules:
-  - record: post_prediction_counter:rate1m
-    expr: rate(post_prediction_counter[1m])
-
   # Alert for any instance that has a median request latency > 1s.
   - alert: APIHighRequestLatency
     expr: api_http_request_latencies_second{quantile="0.5"} > 1

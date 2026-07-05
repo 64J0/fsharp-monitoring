@@ -1,0 +1,16 @@
+[general]
+connection = "Host=localhost;Database=stocks_db;Username=stocks_user;Password=stocks_pass;Port=5432"
+output = "Generated/StocksDb.fs"
+namespace = "FsharpAPI.Infrastructure.Database"
+cli_mutable = true
+
+[sqlhydra_query_integration]
+provider_db_type_attributes = true
+table_declarations = true
+
+[readers]
+reader_type = "Npgsql.NpgsqlDataReader"
+
+[filters]
+include = [ "public/*" ]
+exclude = []

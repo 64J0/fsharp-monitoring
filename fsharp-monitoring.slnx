@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="fsharp-domain/FsharpAPI.Domain.fsproj" />
+  <Project Path="fsharp-application/FsharpAPI.Application.fsproj" />
+  <Project Path="fsharp-infrastructure/FsharpAPI.Infrastructure.fsproj" />
+  <Project Path="fsharp-api/FsharpAPI.fsproj" />
+  <Project Path="db-migrations/FsharpAPI.Migrations.fsproj" />
+  <Project Path="tests/FsharpAPI.Tests.fsproj" />
+  <Project Path="load-test/load-test.fsproj" />
+</Solution>

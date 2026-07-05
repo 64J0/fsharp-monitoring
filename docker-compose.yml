@@ -1,8 +1,48 @@
 # https://github.com/vegasbrianc/prometheus/blob/master/docker-compose.yml
 # https://docs.docker.com/compose/production/
 services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: stocks-postgres
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "256M"
+    environment:
+      POSTGRES_DB: stocks_db
+      POSTGRES_USER: stocks_user
+      POSTGRES_PASSWORD: stocks_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - monitoring-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stocks_user -d stocks_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  db-migrations:
+    build:
+      context: .
+      target: migrations
+    container_name: stocks-migrations
+    environment:
+      - DB_CONNECTION_STRING=Host=postgres;Database=stocks_db;Username=stocks_user;Password=stocks_pass;Port=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - monitoring-network
+
   fsharp-api-server:
-    build: .
+    build:
+      context: .
+      target: runtime
     container_name: fsharp-api
     deploy:
       resources:
@@ -13,11 +53,15 @@ services:
       - HOST=http://0.0.0.0
       - PORT=8085
       - MIN_LOG_LEVEL=INFO
+      - DB_CONNECTION_STRING=Host=postgres;Database=stocks_db;Username=stocks_user;Password=stocks_pass;Port=5432
     ports:
       - "8085:8085"
       - "9085:9085"
     networks:
       - monitoring-network
+    depends_on:
+      db-migrations:
+        condition: service_completed_successfully
     restart: always
 
   prometheus:
@@ -66,6 +110,7 @@ services:
 networks:
   monitoring-network: {}
 
-# volumes:
-#   prometheus_data: {}
-#   grafana_data: {}
+volumes:
+  postgres_data: {}
+  # prometheus_data: {}
+  # grafana_data: {}

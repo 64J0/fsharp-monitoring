@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>FsharpAPI.Domain</AssemblyName>
+    <RootNamespace>FsharpAPI.Domain</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Errors/DomainError.fs" />
+    <Compile Include="ValueObjects/Ticker.fs" />
+    <Compile Include="ValueObjects/Money.fs" />
+    <Compile Include="Entities/Stock.fs" />
+    <Compile Include="Entities/Quote.fs" />
+    <Compile Include="Entities/Trade.fs" />
+    <Compile Include="Rules/TradeRules.fs" />
+  </ItemGroup>
+</Project>
