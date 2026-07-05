@@ -6,6 +6,7 @@ open Microsoft.Extensions.Logging
 
 open Giraffe
 open Giraffe.EndpointRouting
+open Giraffe.OpenApi
 open Prometheus
 open Scalar.AspNetCore
 
@@ -66,6 +67,16 @@ let private configureServices (services: IServiceCollection) =
         .AddMetricServer(fun (options: KestrelMetricServerOptions) -> options.Port <- PROMETHEUS_PORT)
         .AddRouting()
         .AddGiraffe()
+        .AddOpenApi(fun options ->
+            // F# transformers handle option types and discriminated unions in the schema.
+            options.AddSchemaTransformer<FSharpOptionSchemaTransformer>() |> ignore
+            options.AddSchemaTransformer<DiscriminatedUnionSchemaTransformer>() |> ignore
+            // Document-level metadata shown in Scalar / Swagger UI.
+            options.AddDocumentTransformer(fun doc _ _ ->
+                doc.Info.Title <- "Stocks Monitoring API"
+                doc.Info.Description <- "REST API for tracking stocks, quotes, and trade executions."
+                System.Threading.Tasks.Task.CompletedTask)
+            |> ignore)
         .AddOpenApi()
     |> ignore
 

@@ -19,8 +19,13 @@
     <PackageReference Include="Giraffe" Version="8.2.0" />
     <PackageReference Include="Giraffe.OpenApi" Version="0.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
-    <!-- Override the vulnerable Microsoft.OpenApi 2.x pulled by Giraffe.OpenApi -->
-    <PackageReference Include="Microsoft.OpenApi" Version="3.7.0" />
+    <!-- Pin Microsoft.OpenApi to the latest safe 2.x release.
+         Microsoft.AspNetCore.OpenApi 10.x was compiled against the 2.x API;
+         Microsoft.OpenApi 3.x changed OpenApiResponse.Content's return type
+         (breaking change), which causes a MissingMethodException at runtime.
+         Versions 2.7.4 and below have a high-severity vulnerability — 2.9.0 is
+         the latest 2.x release and is clean. -->
+    <PackageReference Include="Microsoft.OpenApi" Version="2.9.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.0" />
     <PackageReference Include="prometheus-net" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
